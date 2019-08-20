@@ -8,14 +8,14 @@ import {
   fetchSpotsSuccess,
   fetchSpotsFail,
 } from '../spots-reducer';
-import { IFetchSpotsOptions } from '../../../common/interfaces';
+import { IFetchSpotOptions } from '../../../common/interfaces';
 import { handleErrors } from './fetch-common';
 
 let skip = 0;
 const limit = 50;
 // const headers = {};
 
-export const fetchSpots: (opts: IFetchSpotsOptions) => void = ({
+export const fetchSpots: (opts: IFetchSpotOptions) => void = ({
   url,
   headers,
   method,

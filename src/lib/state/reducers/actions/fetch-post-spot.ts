@@ -1,5 +1,5 @@
 import { handleErrors } from './fetch-common';
-import { IFetchSpotsOptions } from './../../../common/interfaces';
+import { IFetchSpotOptions } from './../../../common/interfaces';
 import {
   postSpotBegin,
   postSpotSuccess,
@@ -7,7 +7,7 @@ import {
 } from '../spot-post-reducer';
 import { fetchSingleSpot } from './fetch-get-single-spot';
 
-export const putSpot: (opts: IFetchSpotsOptions) => void = ({
+export const putSpot: (opts: IFetchSpotOptions) => void = ({
   url,
   headers,
   method,

@@ -3,6 +3,13 @@ import { IBathingspot } from '../common/interfaces';
 export const nullValueTransform: (spot: IBathingspot) => IBathingspot = (
   spot,
 ) => {
+  const explicitRemove = ['models', 'user', 'measurements'];
+
+  for (const key in spot) {
+    if (explicitRemove.includes(key)) {
+      delete spot[key];
+    }
+  }
   const matchPatterns = {
     hasPrediction: { type: 'boolean' },
     detailId: { type: 'number' },
@@ -47,12 +54,13 @@ export const nullValueTransform: (spot: IBathingspot) => IBathingspot = (
     elevation: { type: 'number' },
     region: { type: 'string' },
   };
+
   for (const spotKey in spot) {
     for (const patternKey in matchPatterns) {
       if (spotKey === patternKey && spot[spotKey] === null) {
         switch (matchPatterns[patternKey].type) {
           case 'boolean':
-            spot[spotKey] = false;
+            spot[spotKey] = undefined;
             break;
           case 'number':
             spot[spotKey] = undefined;
@@ -60,9 +68,9 @@ export const nullValueTransform: (spot: IBathingspot) => IBathingspot = (
           case 'string':
             spot[spotKey] = '';
             break;
-          default:
-            spot[spotKey] = undefined;
-            break;
+          // default:
+          //   spot[spotKey] = undefined;
+          //   break;
         }
       }
     }

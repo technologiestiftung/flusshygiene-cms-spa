@@ -7,7 +7,7 @@ import { useMapResizeEffect } from '../hooks/map-hooks';
 
 import { API_DOMAIN, DEFAULT_SPOT_ID } from '../lib/common/constants';
 import { APIMountPoints, ApiResources, RouteNames } from '../lib/common/enums';
-import { IFetchSpotsOptions } from '../lib/common/interfaces';
+import { IFetchSpotOptions } from '../lib/common/interfaces';
 import { fetchSingleSpot } from '../lib/state/reducers/actions/fetch-get-single-spot';
 import { SpotHeader } from './spot/SpotHeader';
 import { SpotLocation } from './spot/SpotLocation';
@@ -33,7 +33,7 @@ const Spot: React.FC<RouteProps> = ({ match }) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapDims = useMapResizeEffect(mapRef);
 
-  const fetchOpts: IFetchSpotsOptions = {
+  const fetchOpts: IFetchSpotOptions = {
     method: 'GET',
     url: `${API_DOMAIN}/${APIMountPoints.v1}/${ApiResources.bathingspots}/${match.params.id}`,
     headers: {},

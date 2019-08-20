@@ -2,11 +2,18 @@ export interface IObject {
   [key: string]: any;
 }
 
-export interface IFetchSpotsOptions {
-  url: string;
+export interface IFetchHeaders {
+  'content-type': 'application/json';
+  Authorization: string;
+}
+export interface IFetchOptions {
   headers: IObject;
   method: 'GET' | 'POST' | 'PUT' | 'DELETE';
   body?: string;
+  signal?: AbortSignal;
+}
+export interface IFetchSpotOptions extends IFetchOptions {
+  url: string;
 }
 
 export interface IBathingspot {

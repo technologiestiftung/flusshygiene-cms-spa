@@ -8,7 +8,7 @@ import '../assets/styles/map.scss';
 import { useMapResizeEffect } from '../hooks/map-hooks';
 import { API_DOMAIN } from '../lib/common/constants';
 import { APIMountPoints, ApiResources } from '../lib/common/enums';
-import { IFetchSpotsOptions } from '../lib/common/interfaces';
+import { IFetchSpotOptions } from '../lib/common/interfaces';
 // react hooks based on
 // https://codesandbox.io/s/react-redux-hook-by-indrek-lasn-gyoq0
 // see also https://github.com/typescript-cheatsheets/react-typescript-cheatsheet
@@ -57,7 +57,7 @@ const Home: React.FC<{
     }
     const url = `${API_DOMAIN}/${APIMountPoints.v1}/${ApiResources.bathingspots}`;
     // console.log(url);
-    const opts: IFetchSpotsOptions = {
+    const opts: IFetchSpotOptions = {
       url,
       headers: {},
       method: 'GET',

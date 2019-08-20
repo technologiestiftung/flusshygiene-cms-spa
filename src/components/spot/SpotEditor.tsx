@@ -2,7 +2,7 @@ import React from 'react';
 import { Formik, Form } from 'formik';
 import SpotEditorInput from './SpotEditorInput';
 import SpotEditorCheckbox from './SpotEditorCheckbox';
-import { IBathingspot, IFetchSpotsOptions } from '../../lib/common/interfaces';
+import { IBathingspot, IFetchSpotOptions } from '../../lib/common/interfaces';
 import { editorSchema } from '../../lib/utils/spot-validation-schema';
 import { nullValueTransform } from '../../lib/utils/spot-nullvalue-transformer';
 import { SpotEditorButons } from './SpotEditor-Buttons';
@@ -30,6 +30,7 @@ const SpotEditor: React.FC<{
   initialSpot: IBathingspot;
   handleEditModeClick: () => void;
 }> = ({ initialSpot, handleEditModeClick }) => {
+  const { loading, user } = useAuth0();
   const transformedSpot = nullValueTransform(initialSpot);
   const { getTokenSilently } = useAuth0();
 
@@ -52,9 +53,9 @@ const SpotEditor: React.FC<{
         delete body[key];
       }
     }
-    const postOpts: IFetchSpotsOptions = {
+    const postOpts: IFetchSpotOptions = {
       method: 'PUT',
-      url: `${API_DOMAIN}/${APIMountPoints.v1}/${ApiResources.users}/3/${ApiResources.bathingspots}/${spot.id}`,
+      url: `${API_DOMAIN}/${APIMountPoints.v1}/${ApiResources.users}/${user.pgapiData.id}/${ApiResources.bathingspots}/${spot.id}`,
       headers: {
         'content-type': 'application/json',
         Authorization: `Bearer ${token}`,
