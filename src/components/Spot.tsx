@@ -8,7 +8,7 @@ import { useMapResizeEffect } from '../hooks/map-hooks';
 import { API_DOMAIN, DEFAULT_SPOT_ID } from '../lib/common/constants';
 import { APIMountPoints, ApiResources, RouteNames } from '../lib/common/enums';
 import { IFetchSpotsOptions } from '../lib/common/interfaces';
-import { fetchSingleSpot } from '../lib/state/reducers/actions/fetch-single-spot';
+import { fetchSingleSpot } from '../lib/state/reducers/actions/fetch-get-single-spot';
 import { SpotHeader } from './spot/SpotHeader';
 import { SpotLocation } from './spot/SpotLocation';
 import { Measurement } from './spot/SpotMeasurement';
@@ -35,7 +35,7 @@ const Spot: React.FC<RouteProps> = ({ match }) => {
 
   const fetchOpts: IFetchSpotsOptions = {
     method: 'GET',
-    url: `${API_DOMAIN}/${APIMountPoints.v1}/${ApiResources.getBathingspots}/${match.params.id}`,
+    url: `${API_DOMAIN}/${APIMountPoints.v1}/${ApiResources.bathingspots}/${match.params.id}`,
     headers: {},
   };
 
@@ -67,7 +67,10 @@ const Spot: React.FC<RouteProps> = ({ match }) => {
       <div className='columns'>
         <div className='column'>
           {formReadyToRender === true && editMode === true && (
-            <SpotEditor spot={spot} handleEditModeClick={handleEditModeClick} />
+            <SpotEditor
+              initialSpot={spot}
+              handleEditModeClick={handleEditModeClick}
+            />
           )}
         </div>
       </div>

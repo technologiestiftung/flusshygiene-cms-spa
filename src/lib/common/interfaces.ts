@@ -6,6 +6,7 @@ export interface IFetchSpotsOptions {
   url: string;
   headers: IObject;
   method: 'GET' | 'POST' | 'PUT' | 'DELETE';
+  body?: string;
 }
 
 export interface IBathingspot {
@@ -61,4 +62,11 @@ export interface IBathingspot {
   measurements?: IObject[];
   rawModelData?: IObject[];
   region?: IObject;
+}
+
+// redux state
+
+export interface IAction {
+  type: string;
+  payload?: any;
 }

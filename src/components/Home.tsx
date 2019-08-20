@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchSpots } from '../lib/state/reducers/actions/fetch-spots';
+import { fetchSpots } from '../lib/state/reducers/actions/fetch-get-spots';
 import { Card } from './spot/Card';
 import { RootState } from '../lib/state/reducers/root-reducer';
 import SpotsMap from './SpotsMap';
@@ -55,7 +55,7 @@ const Home: React.FC<{
     if (!truncated) {
       return;
     }
-    const url = `${API_DOMAIN}/${APIMountPoints.v1}/${ApiResources.getBathingspots}`;
+    const url = `${API_DOMAIN}/${APIMountPoints.v1}/${ApiResources.bathingspots}`;
     // console.log(url);
     const opts: IFetchSpotsOptions = {
       url,
