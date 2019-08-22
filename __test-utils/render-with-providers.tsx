@@ -13,10 +13,10 @@ function render(ui: any, store: any, history?: any, ...rest: any[]) {
   }
   return rtlRender(
     <Auth0Provider
-      domain={config.domain}
-      client_id={config.clientId}
+      domain={process.env.REACT_APP_DOMAIN}
+      client_id={process.env.REACT_APP_CLIENTID}
       redirect_uri={window.location.origin}
-      audience={config.audience}
+      audience={process.env.REACT_APP_AUDIENCE}
       onRedirectCallback={onRedirectCallback}
     >
       <Provider store={store}>
