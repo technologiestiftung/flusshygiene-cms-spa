@@ -6,7 +6,7 @@ import { render } from '../../__test-utils/render-with-providers';
 import { createMemoryHistory } from 'history';
 import Profile from '../components/Profile';
 import { Auth0Provider } from '../react-auth0-wrapper';
-import config from '../auth_config.json';
+// import config from '../auth_config.json';
 
 // jest.mock('../react-auth0-wrapper.tsx', ()=>{
 //   Auth0Provider: jest.fn(()=>{
@@ -28,10 +28,10 @@ it.skip('renders Home without crashing', () => {
   };
   render(
     <Auth0Provider
-      domain={config.domain}
-      client_id={config.clientId}
+      domain={process.env.REACT_APP_DOMAIN}
+      client_id={process.env.REACT_APP_CLIENTID}
       redirect_uri={window.location.origin}
-      audience={config.audience}
+      audience={process.env.REACT_APP_AUDIENCE}
       onRedirectCallback={onRedirectCallback}
     >
       <Profile />
