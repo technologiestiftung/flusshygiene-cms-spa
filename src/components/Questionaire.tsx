@@ -40,6 +40,9 @@ export const Questionaire: React.FC<{}> = () => {
       })
       .catch((err) => {
         console.error(err);
+      })
+      .finally(() => {
+        console.log('questions', questions);
       });
     return () => {};
   }, []);
