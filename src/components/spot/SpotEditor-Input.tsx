@@ -2,7 +2,7 @@ import { Field, ErrorMessage } from 'formik';
 
 // SpotEditorInput.tsx;
 import React from 'react';
-const SpotEditorInput: React.FC<{
+export const SpotEditorInput: React.FC<{
   name: string;
   type: string;
   label: string;
@@ -30,5 +30,3 @@ const SpotEditorInput: React.FC<{
     </div>
   );
 };
-
-export default SpotEditorInput;

@@ -1,6 +1,6 @@
 import React from 'react';
-import SpotEditorInput from './SpotEditor-Input';
-import SpotEditorCheckbox from './SpotEditor-Checkbox';
+import { SpotEditorInput } from './SpotEditor-Input';
+import { SpotEditorCheckbox } from './SpotEditor-Checkbox';
 import { SpotEditorSelect } from './SpotEditor-Select';
 import { IFormBuildData } from '../../lib/common/interfaces';
 

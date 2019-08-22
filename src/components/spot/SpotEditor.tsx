@@ -5,7 +5,7 @@ import { Formik, Form } from 'formik';
 import { IBathingspot, IFetchSpotOptions } from '../../lib/common/interfaces';
 import { editorSchema } from '../../lib/utils/spot-validation-schema';
 import { nullValueTransform } from '../../lib/utils/spot-nullvalue-transformer';
-import { SpotEditorButons } from './SpotEditor-Buttons';
+import { SpotEditorButtons } from './SpotEditor-Buttons';
 import { API_DOMAIN } from '../../lib/common/constants';
 import { APIMountPoints, ApiResources } from '../../lib/common/enums';
 import { useAuth0 } from '../../react-auth0-wrapper';
@@ -314,7 +314,7 @@ const SpotEditor: React.FC<{
               <div className='modal-background'></div>
               <div className='modal-content'>
                 <Form style={{ paddingTop: '10px' }}>
-                  <SpotEditorButons
+                  <SpotEditorButtons
                     isSubmitting={isSubmitting}
                     handleEditModeClick={handleEditModeClick}
                   />
@@ -334,7 +334,7 @@ const SpotEditor: React.FC<{
                   </SpotEditorBox>
                   {/* </fieldset>
                   </div> */}
-                  <SpotEditorButons
+                  <SpotEditorButtons
                     isSubmitting={isSubmitting}
                     handleEditModeClick={handleEditModeClick}
                   />
