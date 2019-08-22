@@ -17,14 +17,14 @@ const SpotEditorInput: React.FC<{
       </div>
       <div className='field-body'>
         <div className='field'>
-          <p className='control'>
+          <div className='control'>
             <Field type={type} name={name} className=' input' />
             <ErrorMessage
               name={name}
               component='div'
               className='help is-danger'
             />
-          </p>
+          </div>
         </div>
       </div>
     </div>
