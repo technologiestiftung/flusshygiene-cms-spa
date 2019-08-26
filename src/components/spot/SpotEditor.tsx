@@ -26,7 +26,7 @@ import { healthDepartmentData } from './form-data/healtdepartment-data';
 //   { text: 'Nein', value: 'no' },
 // ];
 
-const SpotEditor: React.FC<{
+export const SpotEditor: React.FC<{
   initialSpot: IBathingspot;
   handleEditModeClick: () => void;
 }> = ({ initialSpot, handleEditModeClick }) => {
@@ -352,5 +352,3 @@ const SpotEditor: React.FC<{
     </div>
   );
 };
-
-export default SpotEditor;
