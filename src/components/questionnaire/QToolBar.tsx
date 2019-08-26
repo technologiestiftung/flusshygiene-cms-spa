@@ -8,7 +8,11 @@ export const QToolBar: React.FC<{ handleClick: () => void }> = ({
   return (
     // <Container>
     <div className='buttons'>
-      <button className='button is-small is-badge-small' onClick={handleClick}>
+      <button
+        data-testid='qtoolbar-i-button'
+        className='button is-small is-badge-small'
+        onClick={handleClick}
+      >
         <span className='icon is-small'>
           <IconInfo />
         </span>
