@@ -2,72 +2,222 @@ import React, { useEffect, useState } from 'react';
 import { Container } from './Container';
 import { getQuestions } from '../questionnaire-data';
 import { QIntro } from './questionnaire/QIntro';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faInfo } from '@fortawesome/free-solid-svg-icons';
+import { QToolBar } from './questionnaire/QToolBar';
+import { Formik, Form, FieldArray, Field } from 'formik';
+import { useDispatch } from 'react-redux';
+import { setupQuestions } from '../lib/state/reducers/questionnaire-reducer';
 // interface IInfo {
 //   [key:string]: any;
 // }
 
-const QToolBar: React.FC<{ handleClick: () => void }> = ({ handleClick }) => {
-  return (
-    <Container>
-      <div className='columns'>
-        <div className='column is-is-fullwidth'>
-          <div className='buttons'>
-            <button
-              className='button is-small is-badge-small'
-              onClick={handleClick}
-            >
-              <span className='icon is-small'>
-                <FontAwesomeIcon icon={faInfo} />
-              </span>
-              {/* <span>Info</span> */}
-            </button>
-          </div>
-        </div>
-      </div>
-    </Container>
-  );
-};
+interface IAnswer {
+  text: string;
+  colorText: string;
+  additionalText: string;
+  id: string;
+  weight: number;
+}
+
 export const Questionaire: React.FC<{}> = () => {
+  const [formReadyToRender, setFormReadyToRender] = useState(false);
   const [modalIsActive, setmodalIsActive] = useState(true);
   const [questions, setQuestions] = useState();
+  // const [questionSet, setQuestionSet] = useState(undefined);
+  const [qInfo, setQInfo] = useState('');
+  const [answers, setAnswers] = useState<IAnswer[]>([]);
+  const [qId /*setQId*/] = useState(0);
+  const [title, setTitle] = useState('');
+  const [question, setQuestion] = useState('');
+  const dispatch = useDispatch();
+
   useEffect(() => {
     getQuestions()
       .then((data) => {
-        console.log(data[0][0]);
+        // console.log(data[0][0]);
         setQuestions(data);
       })
       .catch((err) => {
         console.error(err);
       })
       .finally(() => {
-        console.log('questions', questions);
+        // console.log('questions', questions);
       });
     return () => {};
   }, []);
+
+  useEffect(() => {
+    if (answers.length === 0) {
+      return;
+    }
+    if (answers.length > 0) {
+      setFormReadyToRender(true);
+    }
+  }, [answers]);
+  useEffect(() => {
+    if (questions === undefined) {
+      return;
+    }
+    dispatch(setupQuestions(questions.length));
+
+    // setQuestionSet(questions[qId].default);
+
+    setTitle(questions[qId].default[1][1]);
+    setQuestion(questions[qId].default[1][4]);
+    setQInfo(questions[qId].default[1][3]);
+    // console.log(questions);
+  }, [questions, qId, dispatch]);
+
+  useEffect(() => {
+    if (questions === undefined) {
+      return;
+    }
+    const data = questions[qId].default;
+    const localAnswers: IAnswer[] = [];
+    for (let i = 1; i < data.length; i++) {
+      const answer: IAnswer = {
+        additionalText: data[i][7],
+        colorText: data[i][9],
+        text: data[i][6],
+        id: `${qId}-a${i - 1}`,
+        weight: data[i][0],
+      };
+      localAnswers.push(answer);
+    }
+    setAnswers(localAnswers);
+    // console.log(localAnswers);
+  }, [questions, qId]);
   return (
-    <Container>
-      <QToolBar
-        handleClick={() => {
-          setmodalIsActive(true);
-        }}
-      ></QToolBar>
-      <div className={`modal ${modalIsActive === true ? 'is-active' : ''}`}>
-        <div className='modal-background'></div>
-        <div className='modal-content'>
-          <div className='box'>
-            <QIntro />
+    <>
+      <Container>
+        <QToolBar
+          handleClick={() => {
+            setmodalIsActive(true);
+          }}
+        ></QToolBar>
+        <div className={`modal ${modalIsActive === false ? 'is-active' : ''}`}>
+          <div className='modal-background'></div>
+          <div className='modal-content'>
+            <div className='box'>
+              <QIntro />
+            </div>
+            <button
+              className='modal-close is-large'
+              aria-label='close'
+              onClick={() => {
+                setmodalIsActive(false);
+              }}
+            ></button>
           </div>
-          <button
-            className='modal-close is-large'
-            aria-label='close'
-            onClick={() => {
-              setmodalIsActive(false);
-            }}
-          ></button>
         </div>
-      </div>
-    </Container>
+      </Container>
+      <Container>
+        <h1 className={'title is-1 q__title'}>{title}</h1>
+        <div className='content'>
+          <p>{qInfo}</p>
+        </div>
+        <div className='content q__question'>
+          <p>Frage:</p>
+          <p>{question}</p>
+        </div>
+        <div className='q__answer'>
+          <div className='content'>
+            <p>Antworten:</p>
+            {/* {answers.map((ele, i) => (
+              <div key={i}>
+                <p>A: {ele.text}</p>
+                <p>A Color: {ele.colorText}</p>
+              </div>
+            ))} */}
+          </div>
+          <div className='is-danger box'>
+            Todo:
+            <div className='content is-danger'>
+              <ul>
+                <li>pagination</li>
+                <li>content swtiching</li>
+                <li>report</li>
+                <li>additional infos for answer</li>
+                <li>colors mathing</li>
+                <li>radio to text distance</li>
+                <li>
+                  where does submission happen
+                  <ul>
+                    <li>pagiantion</li>
+                    <li>save</li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div>
+            {formReadyToRender === true && (
+              <Formik
+                initialValues={{ answers }}
+                onSubmit={(values, { setSubmitting }) => {
+                  console.log('submitted', values);
+                  setSubmitting(false);
+                }}
+              >
+                {({ values, isSubmitting }) => {
+                  // console.log(values);
+                  return (
+                    <Form>
+                      <button type='submit' disabled={isSubmitting}>
+                        Submit
+                      </button>
+                      <div className='control'>
+                        <FieldArray
+                          name='answers'
+                          render={(_helpers) => (
+                            <div className='control'>
+                              {values.answers.map((ele, index) => {
+                                return (
+                                  <div key={index} className='field'>
+                                    <Field
+                                      type='radio'
+                                      id={`answer--${index}`}
+                                      name={`answer`}
+                                      // id={`${i}`}
+                                      required
+                                      value={answers[`${index}`].id}
+                                      // checked={false}
+                                    />
+                                    <label
+                                      htmlFor={`answer--${index}`}
+                                      className='radio'
+                                    >
+                                      {ele.text}
+                                    </label>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          )}
+                        />
+                      </div>
+                    </Form>
+                  );
+                }}
+              </Formik>
+            )}
+          </div>
+          <div className='q__answer-info'>
+            <div className='content'></div>
+          </div>
+        </div>
+        <pre>
+          <code>
+            {(() => {
+              if (questions !== undefined) {
+                return questions[0].default[1][1];
+              }
+            })()}
+          </code>
+        </pre>
+        <pre>
+          <code>{JSON.stringify(questions, null, 2)}</code>
+        </pre>
+      </Container>
+    </>
   );
 };
