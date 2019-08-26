@@ -7,7 +7,7 @@ describe('Testing Toolbar', () => {
     const { getByTestId } = render(<QToolBar handleClick={handleClick} />);
     const button = getByTestId(/qtoolbar-i-button/i);
     fireEvent.click(button);
-    expect(handleClick.mock).toHaveBeenCalled();
-    expect(handleClick.mock).toHaveBeenCalledTimes(1);
+    expect(handleClick).toHaveBeenCalled();
+    expect(handleClick).toHaveBeenCalledTimes(1);
   });
 });
