@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Container } from './Container';
 import { getQuestions } from '../questionnaire-data';
-import { QIntro } from './questionnaire/QIntro';
-import { QToolBar } from './questionnaire/QToolBar';
+import { QIntro } from './questionaire/QIntro';
+import { QToolBar } from './questionaire/QToolBar';
 import { Formik, Form, FieldArray, Field } from 'formik';
 import { useDispatch } from 'react-redux';
 import { setupQuestions } from '../lib/state/reducers/questionnaire-reducer';
@@ -29,6 +29,7 @@ export const Questionaire: React.FC<{}> = () => {
   const [title, setTitle] = useState('');
   const [question, setQuestion] = useState('');
   const dispatch = useDispatch();
+  const [qAddInfo, setQAddInfo] = useState('');
 
   useEffect(() => {
     getQuestions()
@@ -62,8 +63,9 @@ export const Questionaire: React.FC<{}> = () => {
     // setQuestionSet(questions[qId].default);
 
     setTitle(questions[qId].default[1][1]);
-    setQuestion(questions[qId].default[1][4]);
     setQInfo(questions[qId].default[1][3]);
+    setQuestion(questions[qId].default[1][4]);
+    setQAddInfo(questions[qId].default[1][5]);
     // console.log(questions);
   }, [questions, qId, dispatch]);
 
@@ -111,6 +113,26 @@ export const Questionaire: React.FC<{}> = () => {
         </div>
       </Container>
       <Container>
+        <div className='is-danger box'>
+          Todo:
+          <div className='content is-danger'>
+            <ul>
+              <li>pagination</li>
+              <li>content swtiching</li>
+              <li>report</li>
+              <li>additional infos for answer</li>
+              <li>colors mathing</li>
+              <li>radio to text distance</li>
+              <li>
+                where does submission happen
+                <ul>
+                  <li>pagiantion</li>
+                  <li>save</li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
         <h1 className={'title is-1 q__title'}>{title}</h1>
         <div className='content'>
           <p>{qInfo}</p>
@@ -118,6 +140,9 @@ export const Questionaire: React.FC<{}> = () => {
         <div className='content q__question'>
           <p>Frage:</p>
           <p>{question}</p>
+          <p>
+            <em>{qAddInfo}</em>
+          </p>
         </div>
         <div className='q__answer'>
           <div className='content'>
@@ -129,26 +154,6 @@ export const Questionaire: React.FC<{}> = () => {
               </div>
             ))} */}
           </div>
-          <div className='is-danger box'>
-            Todo:
-            <div className='content is-danger'>
-              <ul>
-                <li>pagination</li>
-                <li>content swtiching</li>
-                <li>report</li>
-                <li>additional infos for answer</li>
-                <li>colors mathing</li>
-                <li>radio to text distance</li>
-                <li>
-                  where does submission happen
-                  <ul>
-                    <li>pagiantion</li>
-                    <li>save</li>
-                  </ul>
-                </li>
-              </ul>
-            </div>
-          </div>
           <div>
             {formReadyToRender === true && (
               <Formik
@@ -158,7 +163,7 @@ export const Questionaire: React.FC<{}> = () => {
                   setSubmitting(false);
                 }}
               >
-                {({ values, isSubmitting }) => {
+                {({ values, isSubmitting, handleChange }) => {
                   // console.log(values);
                   return (
                     <Form>
@@ -178,6 +183,10 @@ export const Questionaire: React.FC<{}> = () => {
                                       id={`answer--${index}`}
                                       name={`answer`}
                                       // id={`${i}`}
+                                      onChange={(e) => {
+                                        handleChange(e);
+                                        console.log(e.target);
+                                      }}
                                       required
                                       value={answers[`${index}`].id}
                                       // checked={false}

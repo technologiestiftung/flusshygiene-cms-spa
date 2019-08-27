@@ -106,7 +106,12 @@
     "collectCoverageFrom": [
       "src/**/*.{js,jsx,ts,tsx}",
       "!<rootDir>/node_modules/",
-      "!<rootDir>/__test-utils"
+      "!<rootDir>/__test-utils",
+      "!**/coverage/**",
+      "!src/setup/**",
+      "!src/react-auth0-wrapper.tsx",
+      "!src/serviceWorker.ts",
+      "!src/stories/**"
     ]
   },
   "husky": {

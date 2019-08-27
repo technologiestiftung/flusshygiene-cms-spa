@@ -21,6 +21,9 @@ module.exports = {
     '!**/node_modules/**',
     '!**/coverage/**',
     '!src/setup/**',
+    '!src/react-auth0-wrapper.tsx',
+    '!src/serviceWorker.ts',
+    '!src/stories/**',
   ],
   coverageThreshold: {
     global: {

@@ -18,7 +18,7 @@ export const SpotEditorCheckbox: React.FC<{
         <div className='field'>
           <div className='control'>
             <label htmlFor={name} className='checkbox'>
-              <Field type='checkbox' name={name} checked={value} />
+              <Field type='checkbox' name={name} checked={value} id={name} />
               <span className='form__checkbox--distance'>{label}</span>
             </label>
             <ErrorMessage

@@ -82,6 +82,7 @@ exports[`Storyshots SpotEditor default 1`] = `
           >
             <button
               className="button is-is-light"
+              data-testid="handle-edit-mode-button"
               disabled={false}
               onClick={[Function]}
               type="button"
@@ -123,6 +124,7 @@ exports[`Storyshots SpotEditor default 1`] = `
                   >
                     <input
                       className=" input"
+                      id="name"
                       name="name"
                       onBlur={[Function]}
                       onChange={[Function]}
@@ -157,6 +159,7 @@ exports[`Storyshots SpotEditor default 1`] = `
                   >
                     <input
                       className=" input"
+                      id="nameLong"
                       name="nameLong"
                       onBlur={[Function]}
                       onChange={[Function]}
@@ -190,6 +193,7 @@ exports[`Storyshots SpotEditor default 1`] = `
                   >
                     <input
                       className=" input"
+                      id="water"
                       name="water"
                       onBlur={[Function]}
                       onChange={[Function]}
@@ -223,6 +227,7 @@ exports[`Storyshots SpotEditor default 1`] = `
                   >
                     <input
                       className=" input"
+                      id="district"
                       name="district"
                       onBlur={[Function]}
                       onChange={[Function]}
@@ -256,6 +261,7 @@ exports[`Storyshots SpotEditor default 1`] = `
                   >
                     <input
                       className=" input"
+                      id="street"
                       name="street"
                       onBlur={[Function]}
                       onChange={[Function]}
@@ -289,6 +295,7 @@ exports[`Storyshots SpotEditor default 1`] = `
                   >
                     <input
                       className=" input"
+                      id="postalCode"
                       name="postalCode"
                       onBlur={[Function]}
                       onChange={[Function]}
@@ -322,6 +329,7 @@ exports[`Storyshots SpotEditor default 1`] = `
                   >
                     <input
                       className=" input"
+                      id="city"
                       name="city"
                       onBlur={[Function]}
                       onChange={[Function]}
@@ -355,6 +363,7 @@ exports[`Storyshots SpotEditor default 1`] = `
                   >
                     <input
                       className=" input"
+                      id="website"
                       name="website"
                       onBlur={[Function]}
                       onChange={[Function]}
@@ -388,6 +397,7 @@ exports[`Storyshots SpotEditor default 1`] = `
                   >
                     <input
                       className=" input"
+                      id="lastClassification"
                       name="lastClassification"
                       onBlur={[Function]}
                       onChange={[Function]}
@@ -421,6 +431,7 @@ exports[`Storyshots SpotEditor default 1`] = `
                   >
                     <input
                       className=" input"
+                      id="image"
                       name="image"
                       onBlur={[Function]}
                       onChange={[Function]}
@@ -454,6 +465,7 @@ exports[`Storyshots SpotEditor default 1`] = `
                   >
                     <input
                       className=" input"
+                      id="latitude"
                       name="latitude"
                       onBlur={[Function]}
                       onChange={[Function]}
@@ -487,6 +499,7 @@ exports[`Storyshots SpotEditor default 1`] = `
                   >
                     <input
                       className=" input"
+                      id="longitude"
                       name="longitude"
                       onBlur={[Function]}
                       onChange={[Function]}
@@ -520,6 +533,7 @@ exports[`Storyshots SpotEditor default 1`] = `
                   >
                     <input
                       className=" input"
+                      id="elevation"
                       name="elevation"
                       onBlur={[Function]}
                       onChange={[Function]}
@@ -553,6 +567,7 @@ exports[`Storyshots SpotEditor default 1`] = `
                   >
                     <input
                       className=" input"
+                      id="apiEndpoints"
                       name="apiEndpoints"
                       onBlur={[Function]}
                       onChange={[Function]}
@@ -586,6 +601,7 @@ exports[`Storyshots SpotEditor default 1`] = `
                       htmlFor="cyanoPossible"
                     >
                       <input
+                        id="cyanoPossible"
                         name="cyanoPossible"
                         onBlur={[Function]}
                         onChange={[Function]}
@@ -628,6 +644,7 @@ exports[`Storyshots SpotEditor default 1`] = `
                   className="select"
                 >
                   <select
+                    id="influencePurificationPlant"
                     name="influencePurificationPlant"
                     onBlur={[Function]}
                     onChange={[Function]}
@@ -667,6 +684,7 @@ exports[`Storyshots SpotEditor default 1`] = `
                   className="select"
                 >
                   <select
+                    id="influenceCombinedSewerSystem"
                     name="influenceCombinedSewerSystem"
                     onBlur={[Function]}
                     onChange={[Function]}
@@ -706,6 +724,7 @@ exports[`Storyshots SpotEditor default 1`] = `
                   className="select"
                 >
                   <select
+                    id="influenceRainwater"
                     name="influenceRainwater"
                     onBlur={[Function]}
                     onChange={[Function]}
@@ -745,6 +764,7 @@ exports[`Storyshots SpotEditor default 1`] = `
                   className="select"
                 >
                   <select
+                    id="influenceAgriculture"
                     name="influenceAgriculture"
                     onBlur={[Function]}
                     onChange={[Function]}
@@ -803,6 +823,7 @@ exports[`Storyshots SpotEditor default 1`] = `
                   >
                     <input
                       className=" input"
+                      id="healthDepartment"
                       name="healthDepartment"
                       onBlur={[Function]}
                       onChange={[Function]}
@@ -836,6 +857,7 @@ exports[`Storyshots SpotEditor default 1`] = `
                   >
                     <input
                       className=" input"
+                      id="healthDepartmentAddition"
                       name="healthDepartmentAddition"
                       onBlur={[Function]}
                       onChange={[Function]}
@@ -869,6 +891,7 @@ exports[`Storyshots SpotEditor default 1`] = `
                   >
                     <input
                       className=" input"
+                      id="healthDepartmentStreet"
                       name="healthDepartmentStreet"
                       onBlur={[Function]}
                       onChange={[Function]}
@@ -902,6 +925,7 @@ exports[`Storyshots SpotEditor default 1`] = `
                   >
                     <input
                       className=" input"
+                      id="healthDepartmentPostalCode"
                       name="healthDepartmentPostalCode"
                       onBlur={[Function]}
                       onChange={[Function]}
@@ -935,6 +959,7 @@ exports[`Storyshots SpotEditor default 1`] = `
                   >
                     <input
                       className=" input"
+                      id="healthDepartmentCity"
                       name="healthDepartmentCity"
                       onBlur={[Function]}
                       onChange={[Function]}
@@ -968,6 +993,7 @@ exports[`Storyshots SpotEditor default 1`] = `
                   >
                     <input
                       className=" input"
+                      id="healthDepartmentMail"
                       name="healthDepartmentMail"
                       onBlur={[Function]}
                       onChange={[Function]}
@@ -1001,6 +1027,7 @@ exports[`Storyshots SpotEditor default 1`] = `
                   >
                     <input
                       className=" input"
+                      id="healthDepartmentPhone"
                       name="healthDepartmentPhone"
                       onBlur={[Function]}
                       onChange={[Function]}
@@ -1045,6 +1072,7 @@ exports[`Storyshots SpotEditor default 1`] = `
                   >
                     <input
                       className=" input"
+                      id="waterRescue"
                       name="waterRescue"
                       onBlur={[Function]}
                       onChange={[Function]}
@@ -1078,6 +1106,7 @@ exports[`Storyshots SpotEditor default 1`] = `
                       htmlFor="waterRescueThroughDLRGorASB"
                     >
                       <input
+                        id="waterRescueThroughDLRGorASB"
                         name="waterRescueThroughDLRGorASB"
                         onBlur={[Function]}
                         onChange={[Function]}
@@ -1117,6 +1146,7 @@ exports[`Storyshots SpotEditor default 1`] = `
                       htmlFor="lifeguard"
                     >
                       <input
+                        id="lifeguard"
                         name="lifeguard"
                         onBlur={[Function]}
                         onChange={[Function]}
@@ -1156,6 +1186,7 @@ exports[`Storyshots SpotEditor default 1`] = `
                       htmlFor="disabilityAccess"
                     >
                       <input
+                        id="disabilityAccess"
                         name="disabilityAccess"
                         onBlur={[Function]}
                         onChange={[Function]}
@@ -1195,6 +1226,7 @@ exports[`Storyshots SpotEditor default 1`] = `
                       htmlFor="disabilityAccessBathrooms"
                     >
                       <input
+                        id="disabilityAccessBathrooms"
                         name="disabilityAccessBathrooms"
                         onBlur={[Function]}
                         onChange={[Function]}
@@ -1234,6 +1266,7 @@ exports[`Storyshots SpotEditor default 1`] = `
                       htmlFor="hasDisabilityAccesableEntrence"
                     >
                       <input
+                        id="hasDisabilityAccesableEntrence"
                         name="hasDisabilityAccesableEntrence"
                         onBlur={[Function]}
                         onChange={[Function]}
@@ -1273,6 +1306,7 @@ exports[`Storyshots SpotEditor default 1`] = `
                       htmlFor="restaurant"
                     >
                       <input
+                        id="restaurant"
                         name="restaurant"
                         onBlur={[Function]}
                         onChange={[Function]}
@@ -1312,6 +1346,7 @@ exports[`Storyshots SpotEditor default 1`] = `
                       htmlFor="snack"
                     >
                       <input
+                        id="snack"
                         name="snack"
                         onBlur={[Function]}
                         onChange={[Function]}
@@ -1351,6 +1386,7 @@ exports[`Storyshots SpotEditor default 1`] = `
                       htmlFor="parkingSpots"
                     >
                       <input
+                        id="parkingSpots"
                         name="parkingSpots"
                         onBlur={[Function]}
                         onChange={[Function]}
@@ -1390,6 +1426,7 @@ exports[`Storyshots SpotEditor default 1`] = `
                       htmlFor="bathrooms"
                     >
                       <input
+                        id="bathrooms"
                         name="bathrooms"
                         onBlur={[Function]}
                         onChange={[Function]}
@@ -1429,6 +1466,7 @@ exports[`Storyshots SpotEditor default 1`] = `
                       htmlFor="bathroomsMobile"
                     >
                       <input
+                        id="bathroomsMobile"
                         name="bathroomsMobile"
                         onBlur={[Function]}
                         onChange={[Function]}
@@ -1468,6 +1506,7 @@ exports[`Storyshots SpotEditor default 1`] = `
                       htmlFor="dogban"
                     >
                       <input
+                        id="dogban"
                         name="dogban"
                         onBlur={[Function]}
                         onChange={[Function]}
@@ -1504,6 +1543,7 @@ exports[`Storyshots SpotEditor default 1`] = `
           >
             <button
               className="button is-is-light"
+              data-testid="handle-edit-mode-button"
               disabled={false}
               onClick={[Function]}
               type="button"
@@ -1550,6 +1590,7 @@ exports[`Storyshots SpotEditor/Checkbox default 1`] = `
           >
             <input
               checked={true}
+              id="name"
               name="name"
               onBlur={[Function]}
               onChange={[Function]}
@@ -1584,6 +1625,7 @@ exports[`Storyshots SpotEditor/Checkbox default 1`] = `
     >
       <button
         className="button is-is-light"
+        data-testid="handle-edit-mode-button"
         disabled={false}
         onClick={[Function]}
         type="button"
@@ -1621,6 +1663,7 @@ exports[`Storyshots SpotEditor/Input text 1`] = `
         >
           <input
             className=" input"
+            id="name"
             name="name"
             onBlur={[Function]}
             onChange={[Function]}
@@ -1650,6 +1693,7 @@ exports[`Storyshots SpotEditor/Input text 1`] = `
     >
       <button
         className="button is-is-light"
+        data-testid="handle-edit-mode-button"
         disabled={false}
         onClick={[Function]}
         type="button"
@@ -1679,6 +1723,7 @@ exports[`Storyshots SpotEditor/Select default 1`] = `
         className="select"
       >
         <select
+          id="name"
           name="name"
           onBlur={[Function]}
           onChange={[Function]}
@@ -1717,6 +1762,7 @@ exports[`Storyshots SpotEditor/Select default 1`] = `
     >
       <button
         className="button is-is-light"
+        data-testid="handle-edit-mode-button"
         disabled={false}
         onClick={[Function]}
         type="button"
