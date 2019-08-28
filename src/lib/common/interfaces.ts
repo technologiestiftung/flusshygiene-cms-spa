@@ -97,3 +97,22 @@ export interface IFormOptions {
   text: string;
   value: string;
 }
+
+export interface IMapsProps {
+  width: number;
+  height: number;
+  data: IBathingspot | (IBathingspot | undefined)[] | undefined;
+  zoom?: number;
+  lat?: number;
+  lon?: number;
+}
+
+export interface IMapsEditorProps extends IMapsProps {
+  areaMode: MapEditModes;
+  locationMode: MapEditModes;
+}
+// ╔╦╗┬ ┬┌─┐┌─┐┌─┐
+//  ║ └┬┘├─┘├┤ └─┐
+//  ╩  ┴ ┴  └─┘└─┘
+
+export type MapEditModes = 'modify' | 'view' | 'drawPoint'; // "a"

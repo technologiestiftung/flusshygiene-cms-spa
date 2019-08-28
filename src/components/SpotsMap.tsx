@@ -2,7 +2,7 @@ import React from 'react';
 import DeckGL from '@deck.gl/react';
 import { StaticMap } from 'react-map-gl';
 import { ScatterplotLayer } from '@deck.gl/layers';
-import { IBathingspot } from '../lib/common/interfaces';
+import { IBathingspot, IMapsProps } from '../lib/common/interfaces';
 import { DEFAULT_SPOT_ID } from '../lib/common/constants';
 // import { useSelector } from 'react-redux';
 // import { RootState } from '../lib/state/reducers/root-reducer';
@@ -15,15 +15,15 @@ const initialViewState = {
   zoom: 4,
 };
 
-const SpotsMap: React.FC<{
-  width: number;
-  height: number;
-  data: IBathingspot | (IBathingspot | undefined)[] | undefined;
-  zoom?: number;
-  lat?: number;
-  lon?: number;
-}> = ({ width, height, data, zoom, lat, lon }) => {
-  // console.log(data);
+const SpotsMap: React.FC<IMapsProps> = ({
+  width,
+  height,
+  data,
+  zoom,
+  lat,
+  lon,
+}) => {
+  // console.log('in spotmap', data);
   if (zoom !== undefined) {
     initialViewState.zoom = zoom;
     if (
