@@ -7,6 +7,7 @@ interface IState {
 const initialState: IState = { data: [] };
 
 export default (state = initialState, action) => {
+  console.log(action.payload);
   switch (action.type) {
     case SET_ANSWER: {
       const res = {
@@ -28,6 +29,9 @@ export default (state = initialState, action) => {
   }
 };
 
-export const setupQuestions = (num: number) => (dispatch) => {
-  dispatch({ type: SETUP_ANSWERS, payload: { num } });
+export const setupAnswersStore = (num: number) => {
+  return { type: SETUP_ANSWERS, payload: { num } };
+};
+export const setAnswerStore = (qindex: number, value?: string) => {
+  return { type: SET_ANSWER, payload: { qindex, value } };
 };

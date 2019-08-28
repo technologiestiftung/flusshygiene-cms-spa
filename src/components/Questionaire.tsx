@@ -5,7 +5,11 @@ import { QIntro } from './questionaire/QIntro';
 import { QToolBar } from './questionaire/QToolBar';
 import { Formik, Form, FieldArray, Field } from 'formik';
 import { useDispatch } from 'react-redux';
-import { setupQuestions } from '../lib/state/reducers/questionnaire-reducer';
+import {
+  setupAnswersStore,
+  setAnswerStore,
+} from '../lib/state/reducers/questionnaire-reducer';
+
 // interface IInfo {
 //   [key:string]: any;
 // }
@@ -16,11 +20,12 @@ interface IAnswer {
   additionalText: string;
   id: string;
   weight: number;
+  answer?: string;
 }
 
 export const Questionaire: React.FC<{}> = () => {
   const [formReadyToRender, setFormReadyToRender] = useState(false);
-  const [modalIsActive, setmodalIsActive] = useState(true);
+  const [modalIsActive, setmodalIsActive] = useState(false);
   const [questions, setQuestions] = useState();
   // const [questionSet, setQuestionSet] = useState(undefined);
   const [qInfo, setQInfo] = useState('');
@@ -58,7 +63,7 @@ export const Questionaire: React.FC<{}> = () => {
     if (questions === undefined) {
       return;
     }
-    dispatch(setupQuestions(questions.length));
+    dispatch(setupAnswersStore(questions.length));
 
     // setQuestionSet(questions[qId].default);
 
@@ -96,7 +101,7 @@ export const Questionaire: React.FC<{}> = () => {
             setmodalIsActive(true);
           }}
         ></QToolBar>
-        <div className={`modal ${modalIsActive === false ? 'is-active' : ''}`}>
+        <div className={`modal ${modalIsActive === true ? 'is-active' : ''}`}>
           <div className='modal-background'></div>
           <div className='modal-content'>
             <div className='box'>
@@ -157,9 +162,10 @@ export const Questionaire: React.FC<{}> = () => {
           <div>
             {formReadyToRender === true && (
               <Formik
-                initialValues={{ answers }}
+                initialValues={{ answers, answer: undefined }}
                 onSubmit={(values, { setSubmitting }) => {
                   console.log('submitted', values);
+                  dispatch(setAnswerStore(qId, values.answer));
                   setSubmitting(false);
                 }}
               >
