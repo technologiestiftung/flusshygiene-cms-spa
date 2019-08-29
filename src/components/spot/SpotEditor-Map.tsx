@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import DeckGL from '@deck.gl/react';
 import { StaticMap } from 'react-map-gl';
-import { IMapsEditorProps } from '../../lib/common/interfaces';
+import {
+  IMapsEditorProps,
+  IGeoJson,
+  IBathingspot,
+} from '../../lib/common/interfaces';
 import { EditableGeoJsonLayer } from '@nebula.gl/layers';
+import { connect, getIn, setIn, FormikState } from 'formik';
 const initialViewState = {
   bearing: 0,
   latitude: 52,
@@ -11,23 +16,35 @@ const initialViewState = {
   zoom: 4,
 };
 
-export const SpotEditorMap: React.FC<IMapsEditorProps> = ({
+const FormikSpotEditorMap: React.FC<IMapsEditorProps> = ({
   width,
   height,
   data,
   zoom,
   lat,
   lon,
-  areaMode,
-  locationMode,
+  editMode,
+  activeEditor,
+  formik,
+  // setFieldValue,
+  // setFieldTouched,
 }) => {
-  const [location, setLocation] = useState({});
-  const [area, setArea] = useState({});
+  console.log(formik);
+  const [location, setLocation] = useState<IGeoJson>();
+  const [area, setArea] = useState<IGeoJson>();
+  useEffect(() => {
+    if (data === undefined) return;
+    if (data[0] === undefined) return;
+    if (location === undefined) return;
+    if (area === undefined) return;
+    data[0].location = location.features[0].geometry;
+    data[0].area = area.features[0].geometry;
+  }, [area, location, data]);
   useEffect(() => {
     if (data === undefined) return;
     if (data[0] === undefined) return;
 
-    const geojsonLocation = {
+    const geojsonLocation: IGeoJson = {
       type: 'FeatureCollection',
       features: [
         {
@@ -36,12 +53,16 @@ export const SpotEditorMap: React.FC<IMapsEditorProps> = ({
         },
       ],
     };
-    const geojsonArea = {
+    const geojsonArea: IGeoJson = {
       type: 'FeatureCollection',
       features: [
         {
           type: 'Feature',
           geometry: data[0].area,
+          properties: {
+            guideType: 'tentative',
+            editHandleType: 'existing',
+          },
         },
       ],
     };
@@ -51,7 +72,7 @@ export const SpotEditorMap: React.FC<IMapsEditorProps> = ({
     return () => {
       // cleanup
     };
-  }, []);
+  }, [data]);
 
   if (zoom !== undefined) {
     initialViewState.zoom = zoom;
@@ -66,34 +87,90 @@ export const SpotEditorMap: React.FC<IMapsEditorProps> = ({
     }
   }
 
-  console.log('Spot editr maps', data![0].location);
+  const locationMode = activeEditor === 'location' ? editMode : 'view';
+  const areaMode = activeEditor === 'area' ? editMode : 'view';
+  const commonProps = {
+    lineWidthMinPixels: 2,
+    editHandlePointRadiusMinPixels: 4,
+    editHandlePointRadiusScale: 200,
+    lineDashJustified: true,
+    modeConfig: {
+      enableSnapping: true,
+      cursor: 'crosshair',
+    },
+    pickingRadius: 20,
+    pickingDepth: 1,
+    onLayerClick: (event) => {
+      console.log(event);
+    },
+    selectedFeatureIndexes: [0],
+  };
   const areaLayer = new EditableGeoJsonLayer({
     id: 'area',
     data: area,
     mode: areaMode,
-    selectedFeatureIndexes: [0],
-    onLayerClick: (event) => {
-      console.log(event);
+    onStopDragging: () => {
+      if (area === undefined) return;
+
+      setIn(formik.values, 'area', area.features[0].geometry);
+
+      // setFieldValue('area', area.features[0].geometry, false);
+      // setFieldTouched('area', true, false);
+
+      // setFieldValue('location', location.features[0].geometry, false);
     },
-    onEdit: ({ updatedData }) => {
-      console.log('updated data from nebula');
-      console.log(updatedData);
-      setLocation(updatedData);
+    onEdit: ({ updatedData, editContext }) => {
+      // console.log('updated data from nebula');
+      // console.log(updatedData);
+      // console.log(editContext);
+      setArea(updatedData);
     },
+    ...commonProps,
   });
   const locationLayer = new EditableGeoJsonLayer({
     id: 'location',
     data: location,
     mode: locationMode,
-    selectedFeatureIndexes: [0],
-    onLayerClick: (event) => {
-      console.log(event);
+    onStopDragging: () => {
+      if (location === undefined) return;
+      // formik.setFieldValue('location', location.features[0].geometry);
+      // formik.setValues({
+      //   ...formik.values,
+      //   ...setIn(formik.values, 'location', location.features[0].geometry),
+      // });
+      // formik.setFieldTouched('location', true, false);
+      formik.setFormikState((prevState: FormikState<IBathingspot>) => {
+        return {
+          ...prevState,
+          values: setIn(
+            prevState.values,
+            'location',
+            location.features[0].geometry,
+          ),
+          touched: setIn(prevState.touched, 'location', true),
+        };
+      });
+      // formik.values = setIn(
+      //   formik.values,
+      //   'location',
+      //   location.features[0].geometry,
+      // );
+
+      // formik.dirty = true;
+
+      // formik. setIn(formik.errors, 'location', undefined);
+      formik.touched = setIn(formik.touched, 'location', true);
+      // setFieldValue('location', location.features[0].geometry, false);
+      // setFieldTouched('location', true, false);
+      // setFieldValue('location', location.features[0].geometry, false);
     },
-    onEdit: ({ updatedData }) => {
-      console.log('updated data from nebula');
-      console.log(updatedData);
+    onEdit: ({ updatedData, editContext }) => {
+      // console.log('updated data from nebula');
+      // console.log(updatedData);
+      // console.log(editContext);
       setLocation(updatedData);
     },
+    ...commonProps,
   });
   return (
     <DeckGL
@@ -102,6 +179,15 @@ export const SpotEditorMap: React.FC<IMapsEditorProps> = ({
       initialViewState={initialViewState}
       controller={true}
       layers={[locationLayer, areaLayer]}
+      getCursor={(() => {
+        if (activeEditor === 'area') {
+          return areaLayer.getCursor.bind(areaLayer);
+        } else if (activeEditor === 'location') {
+          return locationLayer.getCursor.bind(locationLayer);
+        } else {
+          return;
+        }
+      })()}
     >
       <StaticMap
         mapboxApiAccessToken={process.env.REACT_APP_MAPBOX_API_TOKEN}
@@ -111,3 +197,5 @@ export const SpotEditorMap: React.FC<IMapsEditorProps> = ({
     </DeckGL>
   );
 };
+
+export default connect(FormikSpotEditorMap);

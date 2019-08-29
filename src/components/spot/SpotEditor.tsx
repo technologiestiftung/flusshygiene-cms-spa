@@ -25,7 +25,7 @@ import { influenceData } from './form-data/influence-data';
 import { additionalData } from './form-data/additional-data';
 import { healthDepartmentData } from './form-data/healtdepartment-data';
 import { useMapResizeEffect } from '../../hooks/map-hooks';
-import { SpotEditorMap } from './SpotEditor-Map';
+import FormikSpotEditorMap from './SpotEditor-Map';
 import { SpotEditorMapToolbar } from './SpotEditorMapToolbar';
 // const optionsYNU: IFormOptions[] = [
 //   { text: 'Ja', value: 'yes' },
@@ -48,37 +48,51 @@ export const SpotEditor: React.FC<{
         break;
       case 'area':
         if (areaMode === 'modify') {
-          setAreaMode('view');
+          // setAreaMode('view');
           setActiveEditor(undefined);
         } else {
-          setAreaMode('modify');
-          setLocationMode('view');
+          // setAreaMode('modify');
+          // setLocationMode('view');
           setActiveEditor('area');
         }
         break;
       case 'location':
         if (locationMode === 'modify') {
-          setLocationMode('view');
+          // setLocationMode('view');
           setActiveEditor(undefined);
         } else {
-          setLocationMode('modify');
-          setAreaMode('view');
+          // setLocationMode('modify');
+          // setAreaMode('view');
           setActiveEditor('location');
         }
         break;
     }
-    // do something
+  };
+  const mapToolbarEditModeHandler: React.MouseEventHandler<HTMLDivElement> = (
+    event,
+  ) => {
+    event.preventDefault();
+    console.log(event.currentTarget.id);
+    switch (event.currentTarget.id) {
+      case 'view':
+      case 'modify':
+      case 'translate':
+        setEditMode(event.currentTarget.id);
+        break;
+    }
   };
 
   const mapRef = useRef<HTMLDivElement>(null);
   const mapDims = useMapResizeEffect(mapRef);
   const [areaMode, setAreaMode] = useState<MapEditModes>('view');
   const [locationMode, setLocationMode] = useState<MapEditModes>('view');
+  const [editMode, setEditMode] = useState<MapEditModes>('view');
   const [activeEditor, setActiveEditor] = useState<
     'area' | 'location' | undefined
   >(undefined);
   const { user } = useAuth0();
   const transformedSpot = nullValueTransform(initialSpot);
+  console.log(transformedSpot);
   const { getTokenSilently } = useAuth0();
 
   const postDone = useSelector((state: RootState) => state.postSpot.loading);
@@ -87,35 +101,39 @@ export const SpotEditor: React.FC<{
   const callPutSpot = async (spot: IBathingspot) => {
     const token = await getTokenSilently();
     const { id, createdAt, version, updatedAt, ...body } = spot;
+    console.log('unpatched body', body);
     for (const key in body) {
       // if (typeof body[key] === 'string') {
       //   if (body[key].length === 0) {
       //     delete body[key];
       //   }
       // }
-      if (body[key] === null) {
+      if (body[key] === null || body[key] === undefined) {
         delete body[key];
       }
       if (body[key] === transformedSpot[key]) {
         delete body[key];
       }
     }
+    console.log('patched body', body);
+
     const postOpts: IFetchSpotOptions = {
       method: 'PUT',
       url: `${API_DOMAIN}/${APIMountPoints.v1}/${ApiResources.users}/${user.pgapiData.id}/${ApiResources.bathingspots}/${spot.id}`,
       headers: {
-        'content-type': 'application/json',
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(body),
     };
-    console.log(postOpts);
+    console.log('post options', postOpts);
     dispatch(putSpot(postOpts));
   };
 
   return (
     <div>
       <Formik
+        enableReinitialize={true}
         initialValues={transformedSpot}
         validationSchema={editorSchema}
         onSubmit={(values, { setSubmitting }) => {
@@ -127,24 +145,19 @@ export const SpotEditor: React.FC<{
           handleEditModeClick();
         }}
       >
-        {({
-          values,
-          errors,
-          touched,
-          handleChange,
-          handleBlur,
-          handleSubmit,
-          isSubmitting,
-        }) => {
-          const patchedAdditionalData = patchValues(values, additionalData);
+        {(props) => {
+          const patchedAdditionalData = patchValues(
+            props.values,
+            additionalData,
+          );
 
           const patchedInfluenceData = patchValues(
-            values,
+            props.values,
             influenceData,
             'unknown',
           );
 
-          const patchedBasisData = patchValues(values, basisData);
+          const patchedBasisData = patchValues(props.values, basisData);
 
           return (
             <div className='modal is-active'>
@@ -152,22 +165,29 @@ export const SpotEditor: React.FC<{
               <div className='modal-content'>
                 <Form style={{ paddingTop: '10px' }}>
                   <SpotEditorButtons
-                    isSubmitting={isSubmitting}
+                    isSubmitting={props.isSubmitting}
                     handleEditModeClick={handleEditModeClick}
                   />
-                  {values !== undefined && (
+                  {props.values !== undefined && (
                     <SpotEditorBox title={'Geo Daten'}>
                       <SpotEditorMapToolbar
                         handleClick={mapToolbarClickHandler}
                         activeEditor={activeEditor}
+                        handleModeSwitch={mapToolbarEditModeHandler}
+                        activeMode={editMode}
                       />
                       <div ref={mapRef} id='map__container'>
-                        <SpotEditorMap
+                        <FormikSpotEditorMap
                           width={mapDims.width}
                           height={mapDims.height}
-                          data={[values]}
-                          areaMode={areaMode}
-                          locationMode={locationMode}
+                          data={[props.values]}
+                          editMode={editMode}
+                          activeEditor={activeEditor}
+                          setFieldValue={props.setFieldValue}
+                          setFieldTouched={props.setFieldTouched}
+                          formik={props}
+                          // areaMode={areaMode}
+                          // locationMode={locationMode}
                         />
                       </div>
                     </SpotEditorBox>
@@ -189,7 +209,7 @@ export const SpotEditor: React.FC<{
                   {/* </fieldset>
                   </div> */}
                   <SpotEditorButtons
-                    isSubmitting={isSubmitting}
+                    isSubmitting={props.isSubmitting}
                     handleEditModeClick={handleEditModeClick}
                   />
                 </Form>

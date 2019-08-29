@@ -6,10 +6,13 @@ import {
   faEdit,
   faMapMarker,
   faDrawPolygon,
+  faAngleDown,
 } from '@fortawesome/free-solid-svg-icons';
-library.add(faInfo, faEdit, faMapMarker, faDrawPolygon);
-
+library.add(faInfo, faEdit, faMapMarker, faDrawPolygon, faAngleDown);
 export const IconInfo: React.FC = () => <FontAwesomeIcon icon={'info'} />;
+export const IconAngleDown: React.FC = () => (
+  <FontAwesomeIcon icon={'angle-down'} />
+);
 export const IconEdit: React.FC = () => <FontAwesomeIcon icon={'edit'} />;
 export const IconMapMarker: React.FC = () => (
   <FontAwesomeIcon icon={'map-marker'} />

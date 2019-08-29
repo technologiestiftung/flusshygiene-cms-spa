@@ -2,7 +2,7 @@ import React from 'react';
 import DeckGL from '@deck.gl/react';
 import { StaticMap } from 'react-map-gl';
 import { ScatterplotLayer } from '@deck.gl/layers';
-import { IBathingspot, IMapsProps } from '../lib/common/interfaces';
+import { IMapsProps } from '../lib/common/interfaces';
 import { DEFAULT_SPOT_ID } from '../lib/common/constants';
 // import { useSelector } from 'react-redux';
 // import { RootState } from '../lib/state/reducers/root-reducer';

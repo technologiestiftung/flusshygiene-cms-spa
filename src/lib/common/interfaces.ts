@@ -1,3 +1,5 @@
+import { FormikProps } from 'formik';
+
 export interface IObject {
   [key: string]: any;
 }
@@ -98,6 +100,21 @@ export interface IFormOptions {
   value: string;
 }
 
+export interface IGeoJsonFeature {
+  type: 'Feature';
+  geometry: {
+    coordinates: any[];
+    type: string;
+  };
+  properties?: {
+    [key: string]: any;
+  };
+}
+export interface IGeoJson {
+  type: 'FeatureCollection';
+  features: IGeoJsonFeature[];
+}
+
 export interface IMapsProps {
   width: number;
   height: number;
@@ -108,11 +125,21 @@ export interface IMapsProps {
 }
 
 export interface IMapsEditorProps extends IMapsProps {
-  areaMode: MapEditModes;
-  locationMode: MapEditModes;
+  editMode: MapEditModes;
+  setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void;
+  setFieldTouched: (
+    field: string,
+    isTouched?: boolean,
+    shouldValidate?: boolean,
+  ) => void;
+  activeEditor?: MapEditors;
+  formik: FormikProps<IBathingspot>;
+  // formValues: any;
+  // setFormValues: React.Dispatch<any>;
 }
 // ╔╦╗┬ ┬┌─┐┌─┐┌─┐
 //  ║ └┬┘├─┘├┤ └─┐
 //  ╩  ┴ ┴  └─┘└─┘
 
-export type MapEditModes = 'modify' | 'view' | 'drawPoint'; // "a"
+export type MapEditors = 'area' | 'location';
+export type MapEditModes = 'modify' | 'view' | 'drawPoint' | 'translate'; // "a"

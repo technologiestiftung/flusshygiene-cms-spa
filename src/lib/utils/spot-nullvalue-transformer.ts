@@ -1,3 +1,4 @@
+import { IGeoJsonFeature } from './../common/interfaces';
 import { IBathingspot } from '../common/interfaces';
 
 export const nullValueTransform: (spot: IBathingspot) => IBathingspot = (
@@ -53,8 +54,17 @@ export const nullValueTransform: (spot: IBathingspot) => IBathingspot = (
     longitude: { type: 'number' },
     elevation: { type: 'number' },
     region: { type: 'string' },
+    location: { type: 'point' },
+    area: { type: 'polygon' },
   };
 
+  const emptyGeojson: IGeoJsonFeature = {
+    type: 'Feature',
+    geometry: {
+      coordinates: [],
+      type: '',
+    },
+  };
   for (const spotKey in spot) {
     for (const patternKey in matchPatterns) {
       if (spotKey === patternKey && spot[spotKey] === null) {
@@ -67,6 +77,14 @@ export const nullValueTransform: (spot: IBathingspot) => IBathingspot = (
             break;
           case 'string':
             spot[spotKey] = '';
+            break;
+          case 'point':
+            emptyGeojson.geometry.type = 'Point';
+            spot[spotKey] = emptyGeojson;
+            break;
+          case 'polygon':
+            emptyGeojson.geometry.type = 'Polygon';
+            spot[spotKey] = emptyGeojson;
             break;
           // default:
           //   spot[spotKey] = undefined;
