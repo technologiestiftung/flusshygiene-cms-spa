@@ -6,6 +6,7 @@ import {
   IBathingspot,
   IFetchSpotOptions,
   MapEditModes,
+  IGeoJsonGeometry,
 } from '../../lib/common/interfaces';
 import { editorSchema } from '../../lib/utils/spot-validation-schema';
 import { nullValueTransform } from '../../lib/utils/spot-nullvalue-transformer';
@@ -36,7 +37,8 @@ import { SpotEditorMapToolbar } from './SpotEditorMapToolbar';
 export const SpotEditor: React.FC<{
   initialSpot: IBathingspot;
   handleEditModeClick: () => void;
-}> = ({ initialSpot, handleEditModeClick }) => {
+  newSpot?: boolean;
+}> = ({ initialSpot, handleEditModeClick, newSpot }) => {
   const mapToolbarClickHandler: React.MouseEventHandler<HTMLDivElement> = (
     event,
   ) => {
@@ -98,7 +100,7 @@ export const SpotEditor: React.FC<{
   const postDone = useSelector((state: RootState) => state.postSpot.loading);
   const dispatch = useDispatch();
 
-  const callPutSpot = async (spot: IBathingspot) => {
+  const callPutPostSpot = async (spot: IBathingspot) => {
     const token = await getTokenSilently();
     const { id, createdAt, version, updatedAt, ...body } = spot;
     console.log('unpatched body', body);
@@ -108,6 +110,12 @@ export const SpotEditor: React.FC<{
       //     delete body[key];
       //   }
       // }
+      if (key === 'isPublic') {
+        continue;
+      }
+      if (key === 'location' || key === 'area') {
+        continue;
+      }
       if (body[key] === null || body[key] === undefined) {
         delete body[key];
       }
@@ -115,11 +123,18 @@ export const SpotEditor: React.FC<{
         delete body[key];
       }
     }
-    console.log('patched body', body);
 
+    console.log('patched body ', body);
+
+    let url: string;
+    if (newSpot === true) {
+      url = `${API_DOMAIN}/${APIMountPoints.v1}/${ApiResources.users}/${user.pgapiData.id}/${ApiResources.bathingspots}`;
+    } else {
+      url = `${API_DOMAIN}/${APIMountPoints.v1}/${ApiResources.users}/${user.pgapiData.id}/${ApiResources.bathingspots}/${spot.id}`;
+    }
     const postOpts: IFetchSpotOptions = {
-      method: 'PUT',
-      url: `${API_DOMAIN}/${APIMountPoints.v1}/${ApiResources.users}/${user.pgapiData.id}/${ApiResources.bathingspots}/${spot.id}`,
+      method: newSpot === true ? 'POST' : 'PUT',
+      url,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -138,7 +153,7 @@ export const SpotEditor: React.FC<{
         validationSchema={editorSchema}
         onSubmit={(values, { setSubmitting }) => {
           console.log(values);
-          callPutSpot(values).catch((err) => {
+          callPutPostSpot(values).catch((err) => {
             console.error(err);
           });
           setSubmitting(postDone);
@@ -146,6 +161,28 @@ export const SpotEditor: React.FC<{
         }}
       >
         {(props) => {
+          const handleGeoJsonUpdates: (
+            e: React.ChangeEvent<any>,
+            location?: IGeoJsonGeometry,
+            area?: IGeoJsonGeometry,
+          ) => void = (e, location, area) => {
+            if (area !== undefined) {
+              console.log('the area', area);
+              props.setFieldValue('area', area);
+            }
+            if (location !== undefined) {
+              console.log('The location', location);
+              props.setFieldValue('location', location);
+              props.setFieldValue('latitude', location.coordinates[1]);
+              props.setFieldValue('longitude', location.coordinates[0]);
+            }
+            props.handleChange(e);
+          };
+          props.registerField('location', {});
+          props.registerField('area', {});
+          // props.setFieldValue('latitude', location.coordinates[1])
+          const patchedBasisData = patchValues(props.values, basisData);
+
           const patchedAdditionalData = patchValues(
             props.values,
             additionalData,
@@ -156,8 +193,6 @@ export const SpotEditor: React.FC<{
             influenceData,
             'unknown',
           );
-
-          const patchedBasisData = patchValues(props.values, basisData);
 
           return (
             <div className='modal is-active'>
@@ -183,11 +218,7 @@ export const SpotEditor: React.FC<{
                           data={[props.values]}
                           editMode={editMode}
                           activeEditor={activeEditor}
-                          setFieldValue={props.setFieldValue}
-                          setFieldTouched={props.setFieldTouched}
-                          formik={props}
-                          // areaMode={areaMode}
-                          // locationMode={locationMode}
+                          handleUpdates={handleGeoJsonUpdates}
                         />
                       </div>
                     </SpotEditorBox>

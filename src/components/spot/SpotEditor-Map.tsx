@@ -7,7 +7,7 @@ import {
   IBathingspot,
 } from '../../lib/common/interfaces';
 import { EditableGeoJsonLayer } from '@nebula.gl/layers';
-import { connect, getIn, setIn, FormikState } from 'formik';
+import { useFormikContext } from 'formik';
 const initialViewState = {
   bearing: 0,
   latitude: 52,
@@ -25,13 +25,17 @@ const FormikSpotEditorMap: React.FC<IMapsEditorProps> = ({
   lon,
   editMode,
   activeEditor,
-  formik,
-  // setFieldValue,
-  // setFieldTouched,
+  handleUpdates,
 }) => {
-  console.log(formik);
+  // console.log(formik);
+  const { values, setValues } = useFormikContext<IBathingspot>();
   const [location, setLocation] = useState<IGeoJson>();
   const [area, setArea] = useState<IGeoJson>();
+  useEffect(() => {
+    console.log(values);
+    return () => {};
+  }, [values]);
+
   useEffect(() => {
     if (data === undefined) return;
     if (data[0] === undefined) return;
@@ -112,7 +116,7 @@ const FormikSpotEditorMap: React.FC<IMapsEditorProps> = ({
     onStopDragging: () => {
       if (area === undefined) return;
 
-      setIn(formik.values, 'area', area.features[0].geometry);
+      // setIn(formik.values, 'area', area.features[0].geometry);
 
       // setFieldValue('area', area.features[0].geometry, false);
       // setFieldTouched('area', true, false);
@@ -133,23 +137,43 @@ const FormikSpotEditorMap: React.FC<IMapsEditorProps> = ({
     mode: locationMode,
     onStopDragging: () => {
       if (location === undefined) return;
+      const event: React.ChangeEvent<any> = {
+        bubbles: true,
+        cancelable: false,
+        currentTarget: {},
+        nativeEvent: new Event('location'),
+        target: {},
+        defaultPrevented: true,
+        eventPhase: 0,
+        isTrusted: true,
+        preventDefault: () => {},
+        isDefaultPrevented: () => true,
+        stopPropagation: () => {},
+        isPropagationStopped: () => true,
+        persist: () => {},
+        timeStamp: Date.now(),
+        type: 'location',
+      };
+      // var ev2 = new Event('input', { bubbles: true });
+      handleUpdates(event, location.features[0].geometry);
+      // setValues({ ...values, location: location.features[0].geometry });
       // formik.setFieldValue('location', location.features[0].geometry);
       // formik.setValues({
       //   ...formik.values,
       //   ...setIn(formik.values, 'location', location.features[0].geometry),
       // });
       // formik.setFieldTouched('location', true, false);
-      formik.setFormikState((prevState: FormikState<IBathingspot>) => {
-        return {
-          ...prevState,
-          values: setIn(
-            prevState.values,
-            'location',
-            location.features[0].geometry,
-          ),
-          touched: setIn(prevState.touched, 'location', true),
-        };
-      });
+      // formik.setFormikState((prevState: FormikState<IBathingspot>) => {
+      //   return {
+      //     ...prevState,
+      //     values: setIn(
+      //       prevState.values,
+      //       'location',
+      //       location.features[0].geometry,
+      //     ),
+      //     touched: setIn(prevState.touched, 'location', true),
+      //   };
+      // });
       // formik.values = setIn(
       //   formik.values,
       //   'location',
@@ -159,7 +183,7 @@ const FormikSpotEditorMap: React.FC<IMapsEditorProps> = ({
       // formik.dirty = true;
 
       // formik. setIn(formik.errors, 'location', undefined);
-      formik.touched = setIn(formik.touched, 'location', true);
+      // formik.touched = setIn(formik.touched, 'location', true);
       // setFieldValue('location', location.features[0].geometry, false);
       // setFieldTouched('location', true, false);
       // setFieldValue('location', location.features[0].geometry, false);
@@ -198,4 +222,4 @@ const FormikSpotEditorMap: React.FC<IMapsEditorProps> = ({
   );
 };
 
-export default connect(FormikSpotEditorMap);
+export default FormikSpotEditorMap;

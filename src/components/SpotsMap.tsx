@@ -54,7 +54,7 @@ const SpotsMap: React.FC<IMapsProps> = ({
             filled={true}
             getFillColor={(_d: any) => [255, 140, 0]}
             getLineColor={(_d: any) => [0, 0, 0]}
-            getPosition={(d: any) => [d.latitude, d.longitude]}
+            getPosition={(d: any) => [d.longitude, d.latitude]}
             getRadius={100}
             lineWidthMinPixels={1}
             opacity={0.8}

@@ -30,7 +30,7 @@
     "bulma": "^0.7.5",
     "bulma-extensions": "^6.2.7",
     "eslint": "^6.2.2",
-    "formik": "^1.5.8",
+    "formik": "^2.0.1-rc.13",
     "http-proxy-middleware": "^0.19.1",
     "lodash.differenceby": "^4.8.0",
     "lodash.throttle": "^4.1.1",
@@ -119,6 +119,7 @@
       "!src/stories/**"
     ]
   },
+  "proxy": "http://localhost:5004",
   "husky": {
     "hooks": {
       "pre-commit": "npm run lint-staged"

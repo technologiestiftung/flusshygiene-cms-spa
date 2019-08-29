@@ -56,13 +56,14 @@ export const nullValueTransform: (spot: IBathingspot) => IBathingspot = (
     region: { type: 'string' },
     location: { type: 'point' },
     area: { type: 'polygon' },
+    isPublic: { type: 'boolean' },
   };
 
   const emptyGeojson: IGeoJsonFeature = {
     type: 'Feature',
     geometry: {
       coordinates: [],
-      type: '',
+      type: 'Point',
     },
   };
   for (const spotKey in spot) {
