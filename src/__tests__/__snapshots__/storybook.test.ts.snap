@@ -251,6 +251,7 @@ exports[`Storyshots SpotEditor default 1`] = `
                   >
                     <a
                       className="dropdown-item is-active"
+                      href="#/"
                       id="view"
                       onClick={[Function]}
                     >
@@ -258,6 +259,7 @@ exports[`Storyshots SpotEditor default 1`] = `
                     </a>
                     <a
                       className="dropdown-item "
+                      href="#/"
                       id="modify"
                       onClick={[Function]}
                     >
@@ -265,6 +267,7 @@ exports[`Storyshots SpotEditor default 1`] = `
                     </a>
                     <a
                       className="dropdown-item "
+                      href="#/"
                       id="translate"
                       onClick={[Function]}
                     >
