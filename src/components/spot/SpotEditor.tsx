@@ -86,8 +86,8 @@ export const SpotEditor: React.FC<{
 
   const mapRef = useRef<HTMLDivElement>(null);
   const mapDims = useMapResizeEffect(mapRef);
-  const [areaMode, setAreaMode] = useState<MapEditModes>('view');
-  const [locationMode, setLocationMode] = useState<MapEditModes>('view');
+  const [areaMode /*, setAreaMode*/] = useState<MapEditModes>('view');
+  const [locationMode /*, setLocationMode*/] = useState<MapEditModes>('view');
   const [editMode, setEditMode] = useState<MapEditModes>('view');
   const [activeEditor, setActiveEditor] = useState<
     'area' | 'location' | undefined

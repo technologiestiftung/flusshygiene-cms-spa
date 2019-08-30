@@ -28,7 +28,7 @@ const FormikSpotEditorMap: React.FC<IMapsEditorProps> = ({
   handleUpdates,
 }) => {
   // console.log(formik);
-  const { values, setValues } = useFormikContext<IBathingspot>();
+  const { values /*, setValues*/ } = useFormikContext<IBathingspot>();
   const [location, setLocation] = useState<IGeoJson>();
   const [area, setArea] = useState<IGeoJson>();
   useEffect(() => {

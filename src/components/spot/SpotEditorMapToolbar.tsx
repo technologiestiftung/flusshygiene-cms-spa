@@ -63,7 +63,7 @@ const DropDown: React.FC<{
       <div className='dropdown-menu' id='dropdown-menu' role='menu'>
         <div className='dropdown-content'>
           <a
-            // href='#'
+            href='#/'
             className={`dropdown-item ${setActiveMode('view')}`}
             onClick={handleClick}
             id={'view'}
@@ -72,7 +72,7 @@ const DropDown: React.FC<{
           </a>
           {/* <a className='dropdown-item'>Other dropdown item</a> */}
           <a
-            // href='#'
+            href='#/'
             className={`dropdown-item ${setActiveMode('modify')}`}
             onClick={handleClick}
             id={'modify'}
@@ -80,7 +80,8 @@ const DropDown: React.FC<{
             modifizieren
           </a>
           <a
-            // href='#'
+            // dirty hack to keep bulma working
+            href='#/'
             className={`dropdown-item ${setActiveMode('translate')}`}
             onClick={handleClick}
             id={'translate'}
