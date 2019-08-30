@@ -152,7 +152,7 @@ export const SpotEditor: React.FC<{
         initialValues={transformedSpot}
         validationSchema={editorSchema}
         onSubmit={(values, { setSubmitting }) => {
-          console.log(values);
+          // console.log(values);
           callPutPostSpot(values).catch((err) => {
             console.error(err);
           });

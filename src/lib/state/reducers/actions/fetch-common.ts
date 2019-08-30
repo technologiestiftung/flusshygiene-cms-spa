@@ -1,5 +1,5 @@
 export const handleErrors = (response: Response) => {
-  console.log(response);
+  // console.log(response);
 
   // response.json().then((json) => {
   //   console.log(json);
