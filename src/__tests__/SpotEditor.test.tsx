@@ -35,12 +35,14 @@ it('renders Spoteditor without crashing', () => {
     id: 1,
     createdAt: new Date(),
     updatedAt: new Date(),
+    isPublic: true,
   };
 
   const { getAllByLabelText, getAllByTestId } = render(
     <SpotEditor
       initialSpot={spot}
       handleEditModeClick={handleEditModeClickMock}
+      newSpot={true}
     />,
     store,
     history,
