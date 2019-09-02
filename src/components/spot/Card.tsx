@@ -13,6 +13,81 @@ export interface ISpotCard {
   isUserLoggedIn?: boolean;
 }
 
+export const NewCard: React.FC<ISpotCard> = ({
+  title,
+  water,
+  id,
+  image,
+  hasPrediction,
+  isUserLoggedIn,
+}) => {
+  // console.log(image);
+  return (
+    <div className='card'>
+      <div className='card-image'>
+        <figure className='image is-16by9'>
+          <img
+            src={image === null ? 'http://placekitten.com/270/135' : image}
+            alt={''}
+          />
+        </figure>
+      </div>
+
+      <div className='card-content'>
+        <div className='media'>
+          <div className='media-content'>
+            <p className='title is-6'>
+              {title}{' '}
+              {(() => {
+                if (hasPrediction === true) {
+                  return <span className='asteriks'> * </span>;
+                }
+                return null;
+              })()}
+            </p>
+            {(() => {
+              if (water) {
+                if (water.length >= 0) {
+                  return (
+                    <p className='subtitle is-6'>
+                      <span className='spot-water'>{water}</span>;
+                    </p>
+                  );
+                }
+              }
+            })()}
+          </div>
+        </div>
+        <div className='content'>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec
+          iaculis mauris.
+          <br />
+        </div>
+      </div>
+      <footer className='card-footer'>
+        <Link
+          className='card-footer-item'
+          to={`/${RouteNames.bathingspot}/${id}`}
+        >
+          Detail
+        </Link>
+        {(() => {
+          if (isUserLoggedIn !== undefined && isUserLoggedIn === true) {
+            return (
+              <Link
+                className='card-footer-item'
+                to={`/${RouteNames.bathingspot}/${id}`}
+              >
+                Bearbeiten
+              </Link>
+            );
+          }
+        })()}
+      </footer>
+    </div>
+  );
+};
+
 export const Card = (props: ISpotCard) => (
   <li
     data-spot-id={props.id}
