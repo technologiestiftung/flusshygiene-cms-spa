@@ -131,14 +131,15 @@ export const SpotEditor: React.FC<{
         console.error(file, error);
       },
       complete: (results, file?) => {
-        console.log('papaparse results');
-        console.log(file, results);
+        // console.log('papaparse results');
+        // console.log(file, results);
         setParsingErrors(results.errors);
         let allValid = true;
         for (let i = 0; i < results.data.length; i++) {
           const elem = results.data[i];
           measurementsSchema
             .isValid(elem)
+            // eslint-disable-next-line
             .then((valid: boolean) => {
               // console.log(elem, ' is valid', valid);
               if (valid === false) {
@@ -178,8 +179,8 @@ export const SpotEditor: React.FC<{
   ) => {
     const token = await getTokenSilently();
     const { id, createdAt, version, updatedAt, ...body } = spot;
-    console.log(measurmentData);
-    console.log('unpatched body', body);
+    // console.log(measurmentData);
+    // console.log('unpatched body', body);
     for (const key in body) {
       // if (typeof body[key] === 'string') {
       //   if (body[key].length === 0) {
@@ -203,7 +204,7 @@ export const SpotEditor: React.FC<{
       }
     }
 
-    console.log('patched body ', body);
+    // console.log('patched body ', body);
 
     let url: string;
 
@@ -223,7 +224,7 @@ export const SpotEditor: React.FC<{
       update: true,
     };
 
-    console.log('post options', postSpotOpts);
+    // console.log('post options', postSpotOpts);
 
     dispatch(putSpot(postSpotOpts));
     if (
@@ -232,7 +233,7 @@ export const SpotEditor: React.FC<{
         measurmentData !== undefined &&
         measurmentData.length > 0)
     ) {
-      console.log('posting measurements');
+      // console.log('posting measurements');
       const postMeasurmentsOpts: IFetchSpotOptions = {
         method: 'POST',
         url: `${REACT_APP_API_HOST}/${APIMountPoints.v1}/${ApiResources.users}/${user.pgapiData.id}/${ApiResources.bathingspots}/${spot.id}/${ApiResources.measurements}`,
@@ -356,7 +357,7 @@ export const SpotEditor: React.FC<{
                           )
                             return;
                           const file = event.currentTarget.files[0];
-                          console.log('file', file);
+                          // console.log('file', file);
                           props.setFieldValue('csvFile', file);
                           setCsvFile(file);
 
