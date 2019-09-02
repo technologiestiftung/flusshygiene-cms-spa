@@ -4,7 +4,7 @@ import { storiesOf } from '@storybook/react';
 import { CardTile } from '../components/spot/CardTile';
 import { MemoryRouter } from 'react-router';
 
-storiesOf('Card', module)
+storiesOf('CardTile', module)
   .addDecorator((story) => (
     <MemoryRouter initialEntries={['/']}>{story()}</MemoryRouter>
   ))
