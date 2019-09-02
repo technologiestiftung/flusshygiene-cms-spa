@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Storyshots Card default 1`] = `
+exports[`Storyshots CardTile default 1`] = `
 <div
   className="card"
 >
