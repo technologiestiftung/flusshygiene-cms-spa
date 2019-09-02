@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchSpots } from '../lib/state/reducers/actions/fetch-get-spots';
-import { Card, NewCard } from './spot/Card';
+import { CardTile } from './spot/Card';
 import { RootState } from '../lib/state/reducers/root-reducer';
 import SpotsMap from './SpotsMap';
 import '../assets/styles/map.scss';
@@ -112,7 +112,7 @@ const Home: React.FC = () => {
 
                 return (
                   <div key={i} className='tile is-child is-3'>
-                    <NewCard
+                    <CardTile
                       title={obj.name}
                       water={obj.water}
                       id={obj.id}
