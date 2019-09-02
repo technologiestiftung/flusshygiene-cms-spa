@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchSpots } from '../lib/state/reducers/actions/fetch-get-spots';
-import { CardTile } from './spot/Card';
+import { CardTile } from './spot/CardTile';
 import { RootState } from '../lib/state/reducers/root-reducer';
 import SpotsMap from './SpotsMap';
 import '../assets/styles/map.scss';
