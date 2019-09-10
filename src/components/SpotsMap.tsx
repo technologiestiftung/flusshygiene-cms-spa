@@ -1,7 +1,7 @@
 import React from 'react';
 import DeckGL from '@deck.gl/react';
 import { ScatterplotLayer } from '@deck.gl/layers';
-import { IMapsProps } from '../lib/common/interfaces';
+import { IMapsProps, IBathingspot } from '../lib/common/interfaces';
 import { DEFAULT_SPOT_ID } from '../lib/common/constants';
 import { StaticMap } from 'react-map-gl';
 import { REACT_APP_MAPBOX_API_TOKEN } from '../lib/config';
@@ -51,9 +51,13 @@ const SpotsMap: React.FC<IMapsProps> = ({
             id={'scatterplot'}
             data={data}
             filled={true}
-            getFillColor={(_d: any) => [255, 140, 0]}
-            getLineColor={(_d: any) => [0, 0, 0]}
-            getPosition={(d: any) => [d.longitude, d.latitude]}
+            getFillColor={(_d: IBathingspot) => [255, 140, 0]}
+            getLineColor={(_d: IBathingspot) => [0, 0, 0]}
+            getPosition={(d: IBathingspot) => {
+              if (d.location !== undefined) {
+                return [d.location.coordinates[0], d.location.coordinates[1]];
+              }
+            }}
             getRadius={100}
             lineWidthMinPixels={1}
             opacity={0.8}

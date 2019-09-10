@@ -156,6 +156,7 @@ export interface IMapsProps {
   zoom?: number;
   lat?: number;
   lon?: number;
+  selectedIndex?: number;
 }
 
 export interface IMapsEditorProps extends IMapsProps {

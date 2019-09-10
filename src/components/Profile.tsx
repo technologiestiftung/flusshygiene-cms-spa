@@ -72,7 +72,7 @@ const Profile: React.FC = () => {
     // console.log(user);
     // const token = await getTokenSilently();
     const url = `${REACT_APP_API_HOST}/${APIMountPoints.v1}/${ApiResources.users}/${user.pgapiData.id}/${ApiResources.bathingspots}`;
-    console.log(url);
+    // console.log(url);
     // console.log(url);
     const opts: IFetchSpotOptions = {
       url,
@@ -155,39 +155,42 @@ const Profile: React.FC = () => {
           )}
         </Container>
       )}
+      {editMode === false && (
+        <>
+          <Container className={'user__spots-map'}>
+            <div ref={mapRef} id='map__container'>
+              <SpotsMap
+                width={mapDims.width}
+                height={mapDims.height}
+                data={spots}
+              />
+            </div>
+          </Container>
+          <Container className={'user__spots'}>
+            <div className='tile is-ancestor'>
+              <div style={{ flexWrap: 'wrap' }} className='tile is-parent'>
+                {spots.map((obj, i) => {
+                  // return <li key={i}s>{obj.name}</li>;
 
-      <Container className={'user__spots-map'}>
-        <div ref={mapRef} id='map__container'>
-          <SpotsMap
-            width={mapDims.width}
-            height={mapDims.height}
-            data={spots}
-          />
-        </div>
-      </Container>
-      <Container className={'user__spots'}>
-        <div className='tile is-ancestor'>
-          <div style={{ flexWrap: 'wrap' }} className='tile is-parent'>
-            {spots.map((obj, i) => {
-              // return <li key={i}s>{obj.name}</li>;
-
-              return (
-                <div key={i} className='tile is-child is-3'>
-                  <CardTile
-                    title={obj.name}
-                    water={obj.water}
-                    id={obj.id}
-                    image={obj.image}
-                    hasPrediction={obj.hasPrediction}
-                    isUserLoggedIn={false}
-                    key={i}
-                  />
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </Container>
+                  return (
+                    <div key={i} className='tile is-child is-3'>
+                      <CardTile
+                        title={obj.name}
+                        water={obj.water}
+                        id={obj.id}
+                        image={obj.image}
+                        hasPrediction={obj.hasPrediction}
+                        isUserLoggedIn={false}
+                        key={i}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </Container>
+        </>
+      )}
     </React.Fragment>
   );
   // if (loading) {

@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Formik, Form } from 'formik';
 // import SpotEditorInput from './SpotEditor-Input';
 // import SpotEditorCheckbox from './SpotEditor-Checkbox';
@@ -10,7 +10,7 @@ import {
   IBathingspotExtend,
   ICSVValidationErrorRes,
   IBathingspotMeasurement,
-  MapActiveEditor,
+  // MapActiveEditor,
 } from '../../lib/common/interfaces';
 import {
   editorSchema,
@@ -31,9 +31,9 @@ import { setupBasisData } from './form-data/basis-data';
 import { influenceData } from './form-data/influence-data';
 import { additionalData } from './form-data/additional-data';
 import { healthDepartmentData } from './form-data/healtdepartment-data';
-import { useMapResizeEffect } from '../../hooks/map-hooks';
+// import { useMapResizeEffect } from '../../hooks/map-hooks';
 import FormikSpotEditorMap from './SpotEditor-Map';
-import { SpotEditorMapToolbar } from './SpotEditorMapToolbar';
+// import { SpotEditorMapToolbar } from './SpotEditorMapToolbar';
 import { REACT_APP_API_HOST } from '../../lib/config';
 import { SpotEditorFile } from './SpotEditor-File';
 import Papa, { ParseError } from 'papaparse';
@@ -43,55 +43,58 @@ export const SpotEditor: React.FC<{
   handleEditModeClick: () => void;
   newSpot?: boolean;
 }> = ({ initialSpot, handleEditModeClick, newSpot }) => {
-  const mapToolbarClickHandler: React.MouseEventHandler<HTMLDivElement> = (
-    event,
-  ) => {
-    event.preventDefault();
-    console.log(event.currentTarget.id);
-    switch (event.currentTarget.id) {
-      case 'info':
-        // console.log('info');
-        break;
-      case 'area':
-        if (activeEditor === 'area') {
-          // setAreaMode('view');
-          setActiveEditor(undefined);
-        } else {
-          // setAreaMode('modify');
-          // setLocationMode('view');
-          setActiveEditor('area');
-        }
-        break;
-      case 'location':
-        if (activeEditor === 'location') {
-          // setLocationMode('view');
-          setActiveEditor(undefined);
-        } else {
-          // setLocationMode('modify');
-          // setAreaMode('view');
-          setActiveEditor('location');
-        }
-        break;
-    }
-  };
-  const mapToolbarEditModeHandler: React.MouseEventHandler<HTMLDivElement> = (
-    event,
-  ) => {
-    event.preventDefault();
-    console.log(event.currentTarget.id);
-    switch (event.currentTarget.id) {
-      case 'view':
-      case 'modify':
-      case 'translate':
-      case 'drawPoint':
-      case 'drawPolygon':
-        setEditMode(event.currentTarget.id);
-        break;
-    }
-  };
+  // const mapToolbarClickHandler: React.MouseEventHandler<HTMLDivElement> = (
+  //   event,
+  // ) => {
+  //   event.preventDefault();
+  //   console.log(event.currentTarget.id);
+  //   switch (event.currentTarget.id) {
+  //     case 'info':
+  //       // console.log('info');
+  //       break;
+  //     case 'area':
+  //       // setSelectedIndex(1);
+  //       // if (activeEditor === 'area') {
+  //       //   // setAreaMode('view');
+  //       //   setActiveEditor(undefined);
+  //       // } else {
+  //       //   // setAreaMode('modify');
+  //       //   // setLocationMode('view');
+  //       //   setActiveEditor('area');
+  //       // }
+  //       break;
+  //     case 'location':
+  //       // setSelectedIndex(0);
+  //       // if (activeEditor === 'location') {
+  //       //   // setLocationMode('view');
+  //       //   setActiveEditor(undefined);
+  //       // } else {
+  //       //   // setLocationMode('modify');
+  //       //   // setAreaMode('view');
+  //       //   setActiveEditor('location');
+  //       // }
+  //       break;
+  //   }
+  //   // console.log(selectedIndex);
+  // };
+  // const mapToolbarEditModeHandler: React.MouseEventHandler<HTMLDivElement> = (
+  //   event,
+  // ) => {
+  //   event.preventDefault();
+  //   console.log(event.currentTarget.id);
+  //   switch (event.currentTarget.id) {
+  //     case 'view':
+  //     case 'modify':
+  //     case 'translate':
+  //     case 'drawPoint':
+  //     case 'drawPolygon':
+  //       setEditMode(event.currentTarget.id);
+  //       break;
+  //   }
+  // };
 
-  const mapRef = useRef<HTMLDivElement>(null);
-  const mapDims = useMapResizeEffect(mapRef);
+  // const mapRef = useRef<HTMLDivElement>(null);
+  // const mapDims = useMapResizeEffect(mapRef);
 
   // ┌─┐┌┬┐┌─┐┌┬┐┌─┐
   // └─┐ │ ├─┤ │ ├┤
@@ -103,16 +106,17 @@ export const SpotEditor: React.FC<{
   >([]);
   const [measurments, setMeasurments] = useState<IBathingspotMeasurement[]>([]);
   const [allMeasurmentsValid, setAllMeasurmentsValid] = useState(false);
-
+  // const [selectedIndex, setSelectedIndex] = useState<number>(0);
   // const [areaMode /*, setAreaMode*/] = useState<MapEditModes>('view');
   // const [locationMode /*, setLocationMode*/] = useState<MapEditModes>('view');
-  const [editMode, setEditMode] = useState<MapEditModes>('view');
-  const [activeEditor, setActiveEditor] = useState<MapActiveEditor>(undefined);
+  const [editMode /*setEditMode*/] = useState<MapEditModes>('view');
+  // const [activeEditor, setActiveEditor] = useState<MapActiveEditor>(undefined);
 
   const { user } = useAuth0();
   const { getTokenSilently } = useAuth0();
 
   const transformedSpot = nullValueTransform(initialSpot);
+  console.log(transformedSpot);
   // ╦═╗┌─┐┌┬┐┬ ┬─┐ ┬
   // ╠╦╝├┤  │││ │┌┴┬┘
   // ╩╚═└─┘─┴┘└─┘┴ └─
@@ -225,7 +229,7 @@ export const SpotEditor: React.FC<{
       update: true,
     };
 
-    // console.log('post options', postSpotOpts);
+    console.log('post options', postSpotOpts);
 
     dispatch(putSpot(postSpotOpts));
     if (
@@ -254,9 +258,10 @@ export const SpotEditor: React.FC<{
       <Formik
         enableReinitialize={true}
         initialValues={transformedSpot}
-        validationSchema={editorSchema}
+        // validationSchema={editorSchema}
         onSubmit={(values, { setSubmitting }) => {
-          // console.log(values);
+          console.log('onSubmit');
+          console.log(values);
           callPutPostSpot(values, measurments).catch((err) => {
             console.error(err);
           });
@@ -268,6 +273,7 @@ export const SpotEditor: React.FC<{
           // props.registerField('csvFile', {});
           props.registerField('location', {});
           props.registerField('area', {});
+
           const handleGeoJsonUpdates: (
             e: React.ChangeEvent<any>,
             location?: IGeoJsonGeometry,
@@ -294,7 +300,7 @@ export const SpotEditor: React.FC<{
               props.setFieldValue,
               props.values,
               editMode,
-              activeEditor,
+              // activeEditor,
             ),
           );
 
@@ -311,33 +317,37 @@ export const SpotEditor: React.FC<{
 
           return (
             <div>
-              {/* <div className='modal-background'></div> */}
               <div className=''>
-                <SpotEditorButtons
-                  isSubmitting={props.isSubmitting}
-                  handleSubmit={props.handleSubmit}
-                  handleEditModeClick={handleEditModeClick}
-                />
                 <Form style={{ paddingTop: '10px' }}>
+                  <button
+                    className='button is-primary'
+                    type='submit'
+                    disabled={props.isSubmitting}
+                    // onClick={(event: React.ChangeEvent<any>) => {
+                    //   console.log('Hit submit', event);
+                    //   handleSubmit(event);
+                    // }}
+                  >
+                    Speichern
+                  </button>
+                  <SpotEditorButtons
+                    isSubmitting={props.isSubmitting}
+                    // handleSubmit={props.handleSubmit}
+                    handleEditModeClick={handleEditModeClick}
+                  />
                   {props.values !== undefined && (
                     <SpotEditorBox title={'Geo Daten'}>
-                      <SpotEditorMapToolbar
-                        handleClick={mapToolbarClickHandler}
-                        activeEditor={activeEditor}
-                        handleModeSwitch={mapToolbarEditModeHandler}
-                        activeMode={editMode}
+                      <FormikSpotEditorMap
+                        width={800}
+                        height={600}
+                        data={[props.values]}
+                        editMode={editMode}
+                        // selectedIndex={selectedIndex}
+                        // activeEditor={activeEditor}
+                        handleUpdates={handleGeoJsonUpdates}
+                        defaultFormikSetFieldValues={props.setFieldValue}
                       />
-                      <div ref={mapRef} id='map__container'>
-                        <FormikSpotEditorMap
-                          width={mapDims.width}
-                          height={mapDims.height}
-                          data={[props.values]}
-                          editMode={editMode}
-                          activeEditor={activeEditor}
-                          handleUpdates={handleGeoJsonUpdates}
-                          defaultFormikSetFieldValues={props.setFieldValue}
-                        />
-                      </div>
+                      {/* </div> */}
                     </SpotEditorBox>
                   )}
                   <SpotEditorBox title={'Basis Daten'}>
@@ -481,7 +491,7 @@ export const SpotEditor: React.FC<{
                   {/* </fieldset>
                   </div> */}
                   <SpotEditorButtons
-                    handleSubmit={props.handleSubmit}
+                    // handleSubmit={props.handleSubmit}
                     isSubmitting={props.isSubmitting}
                     handleEditModeClick={handleEditModeClick}
                   />

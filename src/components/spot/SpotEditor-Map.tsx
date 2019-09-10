@@ -1,21 +1,32 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import DeckGL from '@deck.gl/react';
 import { MapController } from '@deck.gl/core';
 import {
   IMapsEditorProps,
   IGeoJson,
   MapEditModes,
+  IGeoJsonFeature,
 } from '../../lib/common/interfaces';
 import { EditableGeoJsonLayer } from '@nebula.gl/layers';
-// import { useFormikContext } from 'formik';
+import { useMapResizeEffect } from '../../hooks/map-hooks';
+
 import { StaticMap } from 'react-map-gl';
 import { REACT_APP_MAPBOX_API_TOKEN } from '../../lib/config';
+import { IconAngleDown } from '../fontawesome-icons';
 const initialViewState = {
   bearing: 0,
   latitude: 52,
   longitude: 13,
   pitch: 0,
   zoom: 4,
+};
+
+const dropdownTexts = {
+  view: { text: ' Anzeige' },
+  modify: { text: 'Modifizieren' },
+  translate: { text: 'Bewegen' },
+  drawPoint: { text: 'Position Zeichnen' },
+  drawPolygon: { text: 'Regeneinzugsgebiet Zeichnen' },
 };
 
 const FormikSpotEditorMap: React.FC<IMapsEditorProps> = ({
@@ -25,66 +36,127 @@ const FormikSpotEditorMap: React.FC<IMapsEditorProps> = ({
   zoom,
   lat,
   lon,
-  editMode,
   activeEditor,
-  handleUpdates,
   defaultFormikSetFieldValues,
+  handleUpdates,
 }) => {
+  const mapRef = useRef<HTMLDivElement>(null);
+  const mapDims = useMapResizeEffect(mapRef);
+  const [editMode, setEditMode] = useState<MapEditModes>('view');
+  const mapToolbarEditModeHandler: React.MouseEventHandler<HTMLDivElement> = (
+    event,
+  ) => {
+    event.preventDefault();
+    console.log(event.currentTarget.id);
+    switch (event.currentTarget.id) {
+      case 'view':
+      case 'modify':
+      case 'translate':
+      case 'drawPoint':
+      case 'drawPolygon':
+        if (['modify', 'translate'].includes(event.currentTarget.id)) {
+          setSelectedIndex([0]);
+        }
+        setEditMode(event.currentTarget.id);
+        break;
+    }
+  };
   // console.log(formik);
   // const { values /*, setValues*/ } = useFormikContext<IBathingspot>();
-  const [location, setLocation] = useState<IGeoJson>();
-  const [area, setArea] = useState<IGeoJson>();
+  // const [location, setLocation] = useState<IGeoJson>();
+  // const [area, setArea] = useState<IGeoJson>();
+  const [geoData, setGeoData] = useState<IGeoJson>();
   // useEffect(() => {
   //   console.log(values);
   //   return () => {};
   // }, [values]);
-  const [locationMode, setLocationMode] = useState<MapEditModes>('view');
-  const [areaMode, setAreaMode] = useState<MapEditModes>('view');
+  const [selectedIndex, setSelectedIndex] = useState<number[]>([]);
+  // const [locationMode, setLocationMode] = useState<MapEditModes>('view');
+  // const [areaMode, setAreaMode] = useState<MapEditModes>('view');
 
   useEffect(() => {
     if (data === undefined) return;
     if (data[0] === undefined) return;
-    if (location === undefined) return;
-    if (area === undefined) return;
-    data[0].location = location.features[0].geometry;
-    data[0].area = area.features[0].geometry;
-  }, [area, location, data]);
-  useEffect(() => {
-    if (data !== undefined) {
-      if (data[0] !== undefined) {
-        setLocationMode(editMode);
-        setAreaMode(editMode);
-      }
+    if (geoData === undefined) return;
+    const points = geoData.features.filter(
+      (ele) => ele.geometry.type === 'Point',
+    );
+    const polies = geoData.features.filter(
+      (ele) => ele.geometry.type === 'Polygon',
+    );
+    if (polies.length > 0) {
+      data[0].area = polies[0].geometry;
     }
-  }, [data, editMode]);
+    if (points.length > 0) {
+      data[0].location = points[0].geometry; // geoData.features[0].geometry;
+      // defaultFormikSetFieldValues(
+      //   'latitude',
+      //   points[0].geometry.coordinates[1],
+      // );
+      // defaultFormikSetFieldValues(
+      //   'longitude',
+      //   points[0].geometry.coordinates[0],
+      // );
+    }
+  }, [geoData, data, defaultFormikSetFieldValues]);
+  // useEffect(() => {
+  //   if (data !== undefined) {
+  //     if (data[0] !== undefined) {
+  //       setLocationMode(editMode);
+  //       setAreaMode(editMode);
+  //     }
+  //   }
+  // }, [data, editMode]);
   useEffect(() => {
     if (data === undefined) return;
     if (data[0] === undefined) return;
-
-    const geojsonLocation: IGeoJson = {
-      type: 'FeatureCollection',
-      features: [
-        {
-          type: 'Feature',
-          geometry: data[0].location,
-        },
-      ],
+    if (data[0].location === undefined) return;
+    if (data[0].area === undefined) return;
+    // const geojsonLocation: IGeoJson = {
+    //   type: 'FeatureCollection',
+    //   features: [
+    //     {
+    //       type: 'Feature',
+    //       geometry: data[0].location,
+    //     },
+    //   ],
+    // };
+    const loc: IGeoJsonFeature = {
+      type: 'Feature',
+      geometry: data[0].location,
+      properties: {
+        fhType: 'primary',
+      },
     };
-    const geojsonArea: IGeoJson = {
-      type: 'FeatureCollection',
-      features: [
-        {
-          type: 'Feature',
-          geometry: data[0].area,
-          properties: {
-            guideType: 'tentative',
-            editHandleType: 'existing',
-          },
-        },
-      ],
+    const area: IGeoJsonFeature = {
+      type: 'Feature',
+      geometry: data[0].area,
+      properties: {
+        fhType: 'primary',
+        // guideType: 'tentative',
+        // editHandleType: 'existing',
+      },
     };
-    setArea(geojsonArea);
-    setLocation(geojsonLocation);
+    // const geojsonArea: IGeoJson = {
+    //   type: 'FeatureCollection',
+    //   features: [
+    //     {
+    //       type: 'Feature',
+    //       geometry: data[0].area,
+    //       properties: {
+    //         guideType: 'tentative',
+    //         editHandleType: 'existing',
+    //       },
+    //     },
+    //   ],
+    // };
+    const geo: IGeoJson = {
+      type: 'FeatureCollection',
+      features: [loc, area],
+    };
+    // setArea(geojsonArea);
+    // setLocation(geojsonLocation);
+    setGeoData(geo);
 
     return () => {
       // cleanup
@@ -111,44 +183,45 @@ const FormikSpotEditorMap: React.FC<IMapsEditorProps> = ({
     editHandlePointRadiusMinPixels: 4,
     editHandlePointRadiusScale: 200,
     lineDashJustified: true,
-    modeConfig: {
-      enableSnapping: true,
-      cursor: 'crosshair',
-    },
+    // modeConfig: {
+    //   // enableSnapping: true,
+    //   cursor: 'crosshair',
+    // },
     pickingRadius: 20,
     pickingDepth: 1,
-    onLayerClick: (event) => {
-      console.log(event);
-    },
-    selectedFeatureIndexes: [0],
+    // onLayerClick: (event) => {
+    //   console.log('layer click event', event);
+    // },
   };
-  const areaLayer = new EditableGeoJsonLayer({
-    id: 'area',
-    data: area,
-    mode: areaMode,
-    onStopDragging: () => {
-      if (area === undefined) return;
+  // const areaLayer = new EditableGeoJsonLayer({
+  //   id: 'area',
+  //   data: area,
+  //   mode: areaMode,
+  //   onStopDragging: () => {
+  //     if (area === undefined) return;
 
-      // setIn(formik.values, 'area', area.features[0].geometry);
+  //     // setIn(formik.values, 'area', area.features[0].geometry);
 
-      // setFieldValue('area', area.features[0].geometry, false);
-      // setFieldTouched('area', true, false);
+  //     // setFieldValue('area', area.features[0].geometry, false);
+  //     // setFieldTouched('area', true, false);
 
-      // setFieldValue('location', location.features[0].geometry, false);
-    },
-    onEdit: ({ updatedData, editContext, editType }) => {
-      console.log('updated data from nebula area');
-      console.log(updatedData);
-      console.log(editContext);
-      console.log(editType);
-      setArea(updatedData);
-    },
+  //     // setFieldValue('location', location.features[0].geometry, false);
+  //   },
+  //   onEdit: ({ updatedData, editContext, editType }) => {
+  //     console.log('updated data from nebula area');
+  //     console.log(updatedData);
+  //     console.log(editContext);
+  //     console.log(editType);
+  //     setArea(updatedData);
+  //   },
+  //   ...commonProps,
+  // });
+  const geoLayer = new EditableGeoJsonLayer({
     ...commonProps,
-  });
-  const locationLayer = new EditableGeoJsonLayer({
+    selectedFeatureIndexes: selectedIndex,
     id: 'location',
-    data: location,
-    mode: locationMode,
+    data: geoData,
+    mode: editMode,
     onStopDragging: () => {
       // if (location === undefined) return;
       // const event: React.ChangeEvent<any> = {
@@ -208,60 +281,165 @@ const FormikSpotEditorMap: React.FC<IMapsEditorProps> = ({
       // setFieldValue('location', location.features[0].geometry, false);
       // setFieldTouched('location', true, false);
       // setFieldValue('location', location.features[0].geometry, false);
+      // if (geoData !== undefined) {
+      //   defaultFormikSetFieldValues(
+      //     'latitude',
+      //     geoData.features[0].geometry.coordinates[1],
+      //   );
+      //   defaultFormikSetFieldValues(
+      //     'longitude',
+      //     geoData.features[0].geometry.coordinates[0],
+      //   );
+      // }
     },
     onEdit: ({ updatedData, editContext }) => {
       console.log('updated data from nebula');
+      console.log(editContext);
 
-      // if (updatedData.features.length <= 0) {
-      //   return;
-      // }
       // console.log(updatedData);
-      // updatedData.features = [updatedData.features.pop()];
-      // console.log(updatedData.features[0].geometry.coordinates);
-      // defaultFormikSetFieldValues(
-      //   'latitude',
-      //   updatedData.features[0].geometry.coordinates[1],
-      // );
-      // defaultFormikSetFieldValues(
-      //   'longitude',
-      //   updatedData.features[0].geometry.coordinates[0],
-      // );
-      setLocation(updatedData);
+      const pointFeatures = updatedData.features.filter(
+        (ele: IGeoJsonFeature) => ele.geometry.type === 'Point',
+      );
+      const polyFeatures = updatedData.features.filter(
+        (ele: IGeoJsonFeature) => ele.geometry.type === 'Polygon',
+      );
+      // console.log('point', pointFeatures);
+      // console.log('poly', polyFeatures);
+
+      const geo: IGeoJson = {
+        type: 'FeatureCollection',
+        features: [
+          pointFeatures[pointFeatures.length - 1],
+          polyFeatures[polyFeatures.length - 1],
+        ],
+      };
+
+      setGeoData(geo);
     },
     ...commonProps,
   });
+  const [isActive, setIsActive] = useState(false);
+  const handleClick = (event) => {
+    mapToolbarEditModeHandler(event);
+    setIsActive(false);
+  };
+  const setActiveMode = (mode: string) =>
+    editMode === mode ? 'is-active' : '';
   return (
-    <DeckGL
-      width={width}
-      height={height}
-      initialViewState={initialViewState}
-      // controller={true}
-      layers={[locationLayer, areaLayer]}
-      getCursor={(() => {
-        if (activeEditor === 'area') {
-          return areaLayer.getCursor.bind(areaLayer);
-        } else if (activeEditor === 'location') {
-          return locationLayer.getCursor.bind(locationLayer);
-        } else {
-          return;
-        }
-      })()}
-      controller={{ type: MapController, doubleClickZoom: false }}
-      // views={
-      //   new MapView({
-      //     id: 'basemap',
-      //     controller: {
-      //       doubleClickZoom: false,
-      //     },
-      //   })
-      // }
-    >
-      <StaticMap
-        width={width}
-        height={height}
-        mapboxApiAccessToken={REACT_APP_MAPBOX_API_TOKEN}
-      />
-    </DeckGL>
+    <>
+      <div className={`dropdown ${isActive ? 'is-active' : ''} is-small`}>
+        <div
+          className='dropdown-trigger'
+          aria-haspopup='true'
+          aria-controls='dropdown-menu'
+        >
+          <button
+            className='button is-small'
+            aria-haspopup='true'
+            aria-controls='dropdown-menu'
+            // disabled={isDisabled}
+            onClick={(event) => {
+              event.preventDefault();
+              setIsActive(!isActive);
+            }}
+          >
+            <span style={{ paddingRight: '0.5em' }}>{`Bearbeitungs Modus: ${
+              dropdownTexts[editMode] !== undefined
+                ? dropdownTexts[editMode].text
+                : ''
+            }`}</span>
+            <span>
+              <IconAngleDown />
+            </span>
+          </button>
+        </div>
+        <div className='dropdown-menu' id='dropdown-menu' role='menu'>
+          <div className='dropdown-content'>
+            <a
+              href='#/'
+              className={`dropdown-item ${setActiveMode('view')}`}
+              onClick={handleClick}
+              id={'view'}
+            >
+              anzeigen
+            </a>
+
+            <a
+              href='#/'
+              className={`dropdown-item ${setActiveMode('modify')}`}
+              onClick={handleClick}
+              id={'modify'}
+            >
+              modifizieren
+            </a>
+            <a
+              // dirty hack to keep bulma working
+              href='#/'
+              className={`dropdown-item ${setActiveMode('translate')}`}
+              onClick={handleClick}
+              id={'translate'}
+            >
+              bewegen
+            </a>
+            <a
+              // dirty hack to keep bulma working
+              href='#/'
+              className={`dropdown-item ${setActiveMode('drawPoint')}`}
+              onClick={handleClick}
+              id={'drawPoint'}
+            >
+              Punkt zeichnen
+            </a>
+            <a
+              // dirty hack to keep bulma working
+              href='#/'
+              className={`dropdown-item ${setActiveMode('drawPolygon')}`}
+              onClick={handleClick}
+              id={'drawPolygon'}
+            >
+              Polygon zeichnen
+            </a>
+          </div>
+        </div>
+      </div>
+      <div ref={mapRef} id='map__container'>
+        <DeckGL
+          width={mapDims.width}
+          height={mapDims.height}
+          initialViewState={initialViewState}
+          // controller={true}
+          layers={[geoLayer]}
+          getCursor={(() => {
+            if (activeEditor === 'location') {
+              return geoLayer.getCursor.bind(geoLayer);
+            } else {
+              return;
+            }
+          })()}
+          onClick={(info: any) => {
+            // console.log('onLayerClick', info);
+            if (editMode === 'view' || editMode === 'drawPolygon') {
+              return;
+            }
+            if (info) {
+              console.log(`select editing feature ${info.index}`);
+              if (info.index >= 0) {
+                setSelectedIndex([info.index]);
+              }
+            } else {
+              setSelectedIndex([]);
+            }
+          }}
+          controller={{ type: MapController, doubleClickZoom: false }}
+        >
+          <StaticMap
+            width={width}
+            height={height}
+            mapboxApiAccessToken={REACT_APP_MAPBOX_API_TOKEN}
+          />
+        </DeckGL>
+      </div>
+    </>
   );
 };
 

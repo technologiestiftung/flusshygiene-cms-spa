@@ -93,6 +93,7 @@ const Home: React.FC = () => {
               width={mapDims.width}
               height={mapDims.height}
               data={spots}
+              selectedIndex={0}
             />
           </div>
         </div>
