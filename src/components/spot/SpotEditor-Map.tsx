@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import DeckGL from '@deck.gl/react';
-import { MapView, MapController } from '@deck.gl/core';
+import { MapController } from '@deck.gl/core';
 import {
   IMapsEditorProps,
   IGeoJson,

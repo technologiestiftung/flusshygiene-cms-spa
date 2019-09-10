@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { ButtonIconTB as Button } from '../Buttons';
 import {
   IconInfo,
   IconPolygon,
@@ -13,21 +14,6 @@ const dropdownTexts = {
   translate: { text: 'Bewegen' },
   drawPoint: { text: 'Position Zeichnen' },
   drawPolygon: { text: 'Regeneinzugsgebiet Zeichnen' },
-};
-
-const Button = (props) => {
-  return (
-    <button
-      data-testid='map-toolbar-i-button'
-      className={`button is-small is-badge-small ${
-        props.isActive ? 'is-active' : ''
-      }`}
-      onClick={props.handleClick}
-      id={props.id}
-    >
-      <span className='icon is-small'>{props.children}</span>
-    </button>
-  );
 };
 
 const DropDown: React.FC<{
@@ -85,12 +71,7 @@ const DropDown: React.FC<{
           <span>
             <IconAngleDown />
           </span>
-          {/* <span className='icon is-small'>
-            <i className='fas fa-angle-down' aria-hidden='true'></i>
-          </span> */}
         </button>
-        {/* <span> {activeEditor === undefined ? '' : activeEditor} </span> */}
-        {/* <span> {activeMode === undefined ? '' : activeMode} </span> */}
       </div>
       <div className='dropdown-menu' id='dropdown-menu' role='menu'>
         <div className='dropdown-content'>
@@ -102,7 +83,7 @@ const DropDown: React.FC<{
           >
             anzeigen
           </a>
-          {/* <a className='dropdown-item'>Other dropdown item</a> */}
+
           <a
             href='#/'
             className={`dropdown-item ${setActiveMode('modify')}`}
@@ -163,19 +144,19 @@ export const SpotEditorMapToolbar: React.FC<{
 }> = ({ handleClick, activeEditor, handleModeSwitch, activeMode }) => {
   return (
     <div className='buttons'>
-      <Button handleClick={handleClick} id={'info'} isActive={false}>
+      <Button handleClick={handleClick} cssId={'info'} isActive={false}>
         <IconInfo />
       </Button>
       <Button
         handleClick={handleClick}
-        id={'area'}
+        cssId={'area'}
         isActive={activeEditor === 'area' ? true : false}
       >
         <IconPolygon />
       </Button>
       <Button
         handleClick={handleClick}
-        id={'location'}
+        cssId={'location'}
         isActive={activeEditor === 'location' ? true : false}
       >
         <IconMapMarker />
