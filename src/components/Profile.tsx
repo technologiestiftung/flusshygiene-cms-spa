@@ -69,7 +69,7 @@ const Profile: React.FC = () => {
     if (!truncated) {
       return;
     }
-    console.log(user);
+    // console.log(user);
     // const token = await getTokenSilently();
     const url = `${REACT_APP_API_HOST}/${APIMountPoints.v1}/${ApiResources.users}/${user.pgapiData.id}/${ApiResources.bathingspots}`;
     console.log(url);

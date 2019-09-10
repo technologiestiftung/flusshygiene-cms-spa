@@ -10,6 +10,7 @@ import {
   IBathingspotExtend,
   ICSVValidationErrorRes,
   IBathingspotMeasurement,
+  MapActiveEditor,
 } from '../../lib/common/interfaces';
 import {
   editorSchema,
@@ -26,7 +27,7 @@ import { putSpot } from '../../lib/state/reducers/actions/fetch-post-spot';
 import { SpotEditorBox } from './SpotEditor-Box';
 import { formSectionBuilder } from './SpotEditor-form-section-builder';
 import { patchValues } from './form-data/patch-values';
-import { basisData } from './form-data/basis-data';
+import { setupBasisData } from './form-data/basis-data';
 import { influenceData } from './form-data/influence-data';
 import { additionalData } from './form-data/additional-data';
 import { healthDepartmentData } from './form-data/healtdepartment-data';
@@ -49,10 +50,10 @@ export const SpotEditor: React.FC<{
     console.log(event.currentTarget.id);
     switch (event.currentTarget.id) {
       case 'info':
-        console.log('info');
+        // console.log('info');
         break;
       case 'area':
-        if (areaMode === 'modify') {
+        if (activeEditor === 'area') {
           // setAreaMode('view');
           setActiveEditor(undefined);
         } else {
@@ -62,7 +63,7 @@ export const SpotEditor: React.FC<{
         }
         break;
       case 'location':
-        if (locationMode === 'modify') {
+        if (activeEditor === 'location') {
           // setLocationMode('view');
           setActiveEditor(undefined);
         } else {
@@ -82,6 +83,8 @@ export const SpotEditor: React.FC<{
       case 'view':
       case 'modify':
       case 'translate':
+      case 'drawPoint':
+      case 'drawPolygon':
         setEditMode(event.currentTarget.id);
         break;
     }
@@ -101,12 +104,10 @@ export const SpotEditor: React.FC<{
   const [measurments, setMeasurments] = useState<IBathingspotMeasurement[]>([]);
   const [allMeasurmentsValid, setAllMeasurmentsValid] = useState(false);
 
-  const [areaMode /*, setAreaMode*/] = useState<MapEditModes>('view');
-  const [locationMode /*, setLocationMode*/] = useState<MapEditModes>('view');
+  // const [areaMode /*, setAreaMode*/] = useState<MapEditModes>('view');
+  // const [locationMode /*, setLocationMode*/] = useState<MapEditModes>('view');
   const [editMode, setEditMode] = useState<MapEditModes>('view');
-  const [activeEditor, setActiveEditor] = useState<
-    'area' | 'location' | undefined
-  >(undefined);
+  const [activeEditor, setActiveEditor] = useState<MapActiveEditor>(undefined);
 
   const { user } = useAuth0();
   const { getTokenSilently } = useAuth0();
@@ -265,11 +266,14 @@ export const SpotEditor: React.FC<{
       >
         {(props) => {
           // props.registerField('csvFile', {});
+          props.registerField('location', {});
+          props.registerField('area', {});
           const handleGeoJsonUpdates: (
             e: React.ChangeEvent<any>,
             location?: IGeoJsonGeometry,
             area?: IGeoJsonGeometry,
           ) => void = (e, location, area) => {
+            console.log('handel geojson update');
             if (area !== undefined) {
               console.log('the area', area);
               props.setFieldValue('area', area);
@@ -277,15 +281,22 @@ export const SpotEditor: React.FC<{
             if (location !== undefined) {
               console.log('The location', location);
               props.setFieldValue('location', location);
-              props.setFieldValue('latitude', location.coordinates[1]);
-              props.setFieldValue('longitude', location.coordinates[0]);
+              // props.setFieldValue('latitude', location.coordinates[1]);
+              // props.setFieldValue('longitude', location.coordinates[0]);
             }
             props.handleChange(e);
           };
-          props.registerField('location', {});
-          props.registerField('area', {});
           // props.setFieldValue('latitude', location.coordinates[1])
-          const patchedBasisData = patchValues(props.values, basisData);
+          const patchedBasisData = patchValues(
+            props.values,
+            setupBasisData(
+              props.handleChange,
+              props.setFieldValue,
+              props.values,
+              editMode,
+              activeEditor,
+            ),
+          );
 
           const patchedAdditionalData = patchValues(
             props.values,
@@ -324,12 +335,13 @@ export const SpotEditor: React.FC<{
                           editMode={editMode}
                           activeEditor={activeEditor}
                           handleUpdates={handleGeoJsonUpdates}
+                          defaultFormikSetFieldValues={props.setFieldValue}
                         />
                       </div>
                     </SpotEditorBox>
                   )}
                   <SpotEditorBox title={'Basis Daten'}>
-                    {formSectionBuilder(patchedBasisData)}
+                    {formSectionBuilder(patchedBasisData, props.handleChange)}
                   </SpotEditorBox>
                   <SpotEditorBox title={'Messwerte'}>
                     {newSpot === true && (
@@ -448,14 +460,23 @@ export const SpotEditor: React.FC<{
                   </SpotEditorBox>
                   <SpotEditorBox title={'Bilder'}></SpotEditorBox>
                   <SpotEditorBox title={'Hygienische Beeinträchtigung durch:'}>
-                    {formSectionBuilder(patchedInfluenceData)}
+                    {formSectionBuilder(
+                      patchedInfluenceData,
+                      props.handleChange,
+                    )}
                   </SpotEditorBox>
                   <SpotEditorBox title={'Zuständiges Gesundheitsamt'}>
-                    {formSectionBuilder(healthDepartmentData)}
+                    {formSectionBuilder(
+                      healthDepartmentData,
+                      props.handleChange,
+                    )}
                   </SpotEditorBox>
 
                   <SpotEditorBox title={'Zusatz Daten'}>
-                    {formSectionBuilder(patchedAdditionalData)}
+                    {formSectionBuilder(
+                      patchedAdditionalData,
+                      props.handleChange,
+                    )}
                   </SpotEditorBox>
                   {/* </fieldset>
                   </div> */}

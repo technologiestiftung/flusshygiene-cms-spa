@@ -11,6 +11,8 @@ const dropdownTexts = {
   view: { text: ' Anzeige' },
   modify: { text: 'Modifizieren' },
   translate: { text: 'Bewegen' },
+  drawPoint: { text: 'Position Zeichnen' },
+  drawPolygon: { text: 'Regeneinzugsgebiet Zeichnen' },
 };
 
 const Button = (props) => {
@@ -34,10 +36,28 @@ const DropDown: React.FC<{
   handleModeSwitch: (...args: any) => void;
 }> = ({ handleModeSwitch, activeEditor, activeMode }) => {
   const [isActive, setIsActive] = useState(false);
+  // const [isDisabled, setIsDisabled] = useState(true);
+  // useEffect(() => {
+  //   if (activeEditor === undefined) {
+  //     setIsDisabled(true);
+  //   } else {
+  //     setIsDisabled(false);
+  //   }
+  // }, [activeEditor]);
+  // useEffect(() => {
+  //   if (isDisabled === true) {
+  //     setIsActive(false);
+  //   } else {
+  //     setIsActive(true);
+  //   }
+  //   return () => {};
+  // }, [isDisabled]);
+
   const handleClick = (event) => {
     handleModeSwitch(event);
     setIsActive(false);
   };
+
   const setActiveMode = (mode: string) =>
     activeMode === mode ? 'is-active' : '';
   return (
@@ -51,6 +71,7 @@ const DropDown: React.FC<{
           className='button is-small'
           aria-haspopup='true'
           aria-controls='dropdown-menu'
+          // disabled={isDisabled}
           onClick={(event) => {
             event.preventDefault();
             setIsActive(!isActive);
@@ -98,6 +119,32 @@ const DropDown: React.FC<{
             id={'translate'}
           >
             bewegen
+          </a>
+          <a
+            // dirty hack to keep bulma working
+            href='#/'
+            className={`dropdown-item ${setActiveMode('drawPoint')} ${
+              activeEditor === 'area' || activeEditor === undefined
+                ? 'is-hidden'
+                : ''
+            }`}
+            onClick={handleClick}
+            id={'drawPoint'}
+          >
+            Punkt zeichnen
+          </a>
+          <a
+            // dirty hack to keep bulma working
+            href='#/'
+            className={`dropdown-item ${setActiveMode('drawPolygon')} ${
+              activeEditor === 'location' || activeEditor === undefined
+                ? 'is-hidden'
+                : ''
+            }`}
+            onClick={handleClick}
+            id={'drawPolygon'}
+          >
+            Polygon zeichnen
           </a>
           {/* <hr className='dropdown-divider' />
           <a href='#' className='dropdown-item'>

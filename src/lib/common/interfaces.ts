@@ -1,5 +1,5 @@
 import { IGeoJson, IBathingspot } from './interfaces';
-import { FormikProps } from 'formik';
+import { FormikProps, FormikHelpers } from 'formik';
 
 export interface IObject {
   [key: string]: any;
@@ -125,6 +125,7 @@ export interface IFormBuildData {
   label: string;
   value?: boolean | string;
   options?: IFormOptions[];
+  handleChange?: (event: any) => void;
 }
 
 export interface IFormOptions {
@@ -160,6 +161,9 @@ export interface IMapsProps {
 export interface IMapsEditorProps extends IMapsProps {
   editMode: MapEditModes;
   activeEditor?: MapEditors;
+  defaultFormikSetFieldValues: FormikHelpers<
+    IBathingspotExtend
+  >['setFieldValue'];
   handleUpdates: (
     e: React.ChangeEvent<any>,
     location?: IGeoJsonGeometry,
@@ -171,4 +175,10 @@ export interface IMapsEditorProps extends IMapsProps {
 //  ╩  ┴ ┴  └─┘└─┘
 
 export type MapEditors = 'area' | 'location';
-export type MapEditModes = 'modify' | 'view' | 'drawPoint' | 'translate'; // "a"
+export type MapEditModes =
+  | 'modify'
+  | 'view'
+  | 'drawPoint'
+  | 'drawPolygon'
+  | 'translate';
+export type MapActiveEditor = 'area' | 'location' | undefined;

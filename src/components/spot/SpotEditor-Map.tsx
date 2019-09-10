@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import DeckGL from '@deck.gl/react';
-import { IMapsEditorProps, IGeoJson } from '../../lib/common/interfaces';
+import { MapView, MapController } from '@deck.gl/core';
+import {
+  IMapsEditorProps,
+  IGeoJson,
+  MapEditModes,
+} from '../../lib/common/interfaces';
 import { EditableGeoJsonLayer } from '@nebula.gl/layers';
 // import { useFormikContext } from 'formik';
 import { StaticMap } from 'react-map-gl';
@@ -23,6 +28,7 @@ const FormikSpotEditorMap: React.FC<IMapsEditorProps> = ({
   editMode,
   activeEditor,
   handleUpdates,
+  defaultFormikSetFieldValues,
 }) => {
   // console.log(formik);
   // const { values /*, setValues*/ } = useFormikContext<IBathingspot>();
@@ -32,6 +38,8 @@ const FormikSpotEditorMap: React.FC<IMapsEditorProps> = ({
   //   console.log(values);
   //   return () => {};
   // }, [values]);
+  const [locationMode, setLocationMode] = useState<MapEditModes>('view');
+  const [areaMode, setAreaMode] = useState<MapEditModes>('view');
 
   useEffect(() => {
     if (data === undefined) return;
@@ -41,6 +49,14 @@ const FormikSpotEditorMap: React.FC<IMapsEditorProps> = ({
     data[0].location = location.features[0].geometry;
     data[0].area = area.features[0].geometry;
   }, [area, location, data]);
+  useEffect(() => {
+    if (data !== undefined) {
+      if (data[0] !== undefined) {
+        setLocationMode(editMode);
+        setAreaMode(editMode);
+      }
+    }
+  }, [data, editMode]);
   useEffect(() => {
     if (data === undefined) return;
     if (data[0] === undefined) return;
@@ -88,8 +104,8 @@ const FormikSpotEditorMap: React.FC<IMapsEditorProps> = ({
     }
   }
 
-  const locationMode = activeEditor === 'location' ? editMode : 'view';
-  const areaMode = activeEditor === 'area' ? editMode : 'view';
+  // const locationMode = activeEditor === 'location' ? editMode : 'view';
+  // const areaMode = activeEditor === 'area' ? editMode : 'view';
   const commonProps = {
     lineWidthMinPixels: 2,
     editHandlePointRadiusMinPixels: 4,
@@ -120,10 +136,11 @@ const FormikSpotEditorMap: React.FC<IMapsEditorProps> = ({
 
       // setFieldValue('location', location.features[0].geometry, false);
     },
-    onEdit: ({ updatedData, editContext }) => {
-      // console.log('updated data from nebula');
-      // console.log(updatedData);
-      // console.log(editContext);
+    onEdit: ({ updatedData, editContext, editType }) => {
+      console.log('updated data from nebula area');
+      console.log(updatedData);
+      console.log(editContext);
+      console.log(editType);
       setArea(updatedData);
     },
     ...commonProps,
@@ -133,26 +150,35 @@ const FormikSpotEditorMap: React.FC<IMapsEditorProps> = ({
     data: location,
     mode: locationMode,
     onStopDragging: () => {
-      if (location === undefined) return;
-      const event: React.ChangeEvent<any> = {
-        bubbles: true,
-        cancelable: false,
-        currentTarget: {},
-        nativeEvent: new Event('location'),
-        target: {},
-        defaultPrevented: true,
-        eventPhase: 0,
-        isTrusted: true,
-        preventDefault: () => {},
-        isDefaultPrevented: () => true,
-        stopPropagation: () => {},
-        isPropagationStopped: () => true,
-        persist: () => {},
-        timeStamp: Date.now(),
-        type: 'location',
-      };
-      // var ev2 = new Event('input', { bubbles: true });
-      handleUpdates(event, location.features[0].geometry);
+      // if (location === undefined) return;
+      // const event: React.ChangeEvent<any> = {
+      //   bubbles: true,
+      //   cancelable: false,
+      //   currentTarget: {},
+      //   nativeEvent: new Event('location'),
+      //   target: {},
+      //   defaultPrevented: true,
+      //   eventPhase: 0,
+      //   isTrusted: true,
+      //   preventDefault: () => {},
+      //   isDefaultPrevented: () => true,
+      //   stopPropagation: () => {},
+      //   isPropagationStopped: () => true,
+      //   persist: () => {},
+      //   timeStamp: Date.now(),
+      //   type: 'location',
+      // };
+      // // var ev2 = new Event('input', { bubbles: true });
+      // console.log('stop dragging');
+      // defaultFormikSetFieldValues(
+      //   'latitude',
+      //   location.features[0].geometry.coordinates[1],
+      // );
+      // defaultFormikSetFieldValues(
+      //   'longitude',
+      //   location.features[0].geometry.coordinates[0],
+      // );
+      // handleUpdates(event, location.features[0].geometry);
       // setValues({ ...values, location: location.features[0].geometry });
       // formik.setFieldValue('location', location.features[0].geometry);
       // formik.setValues({
@@ -176,9 +202,7 @@ const FormikSpotEditorMap: React.FC<IMapsEditorProps> = ({
       //   'location',
       //   location.features[0].geometry,
       // );
-
       // formik.dirty = true;
-
       // formik. setIn(formik.errors, 'location', undefined);
       // formik.touched = setIn(formik.touched, 'location', true);
       // setFieldValue('location', location.features[0].geometry, false);
@@ -186,9 +210,22 @@ const FormikSpotEditorMap: React.FC<IMapsEditorProps> = ({
       // setFieldValue('location', location.features[0].geometry, false);
     },
     onEdit: ({ updatedData, editContext }) => {
-      // console.log('updated data from nebula');
+      console.log('updated data from nebula');
+
+      // if (updatedData.features.length <= 0) {
+      //   return;
+      // }
       // console.log(updatedData);
-      // console.log(editContext);
+      // updatedData.features = [updatedData.features.pop()];
+      // console.log(updatedData.features[0].geometry.coordinates);
+      // defaultFormikSetFieldValues(
+      //   'latitude',
+      //   updatedData.features[0].geometry.coordinates[1],
+      // );
+      // defaultFormikSetFieldValues(
+      //   'longitude',
+      //   updatedData.features[0].geometry.coordinates[0],
+      // );
       setLocation(updatedData);
     },
     ...commonProps,
@@ -198,7 +235,7 @@ const FormikSpotEditorMap: React.FC<IMapsEditorProps> = ({
       width={width}
       height={height}
       initialViewState={initialViewState}
-      controller={true}
+      // controller={true}
       layers={[locationLayer, areaLayer]}
       getCursor={(() => {
         if (activeEditor === 'area') {
@@ -209,6 +246,15 @@ const FormikSpotEditorMap: React.FC<IMapsEditorProps> = ({
           return;
         }
       })()}
+      controller={{ type: MapController, doubleClickZoom: false }}
+      // views={
+      //   new MapView({
+      //     id: 'basemap',
+      //     controller: {
+      //       doubleClickZoom: false,
+      //     },
+      //   })
+      // }
     >
       <StaticMap
         width={width}

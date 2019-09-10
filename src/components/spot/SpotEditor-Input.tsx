@@ -6,7 +6,8 @@ export const SpotEditorInput: React.FC<{
   name: string;
   type: string;
   label: string;
-}> = ({ name, label, type }) => {
+  handleChange: (event) => void;
+}> = ({ name, label, type, handleChange }) => {
   // console.log(name);
   return (
     <div className='field is-horizontal'>
@@ -24,6 +25,7 @@ export const SpotEditorInput: React.FC<{
               className='input'
               id={name}
               data-testid={`test-input-${name}`}
+              onChange={handleChange}
             />
             <ErrorMessage
               name={name}
