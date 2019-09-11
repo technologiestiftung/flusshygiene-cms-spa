@@ -27,9 +27,14 @@ const Spot: React.FC<RouteProps> = ({ match }) => {
   const handleEditModeClick = () => {
     setEditMode(!editMode);
   };
+  const handleCalibrationClick = () => {
+    console.log('Start calibration');
+    setShowNotification((prevState) => !prevState);
+  };
   const dispatch = useDispatch();
   const [formReadyToRender, setFormReadyToRender] = useState(false);
   const [editMode, setEditMode] = useState(false);
+  const [showNotification, setShowNotification] = useState(false);
   const spot = useSelector((state: RootState) => state.detailSpot.spot);
   const isSingleSpotLoading = useSelector(
     (state: RootState) => state.detailSpot.loading,
@@ -42,6 +47,13 @@ const Spot: React.FC<RouteProps> = ({ match }) => {
     url: `${REACT_APP_API_HOST}/${APIMountPoints.v1}/${ApiResources.bathingspots}/${match.params.id}`,
     headers: {},
   };
+
+  useEffect(() => {
+    if (showNotification === false) return;
+    setTimeout(() => {
+      setShowNotification(false);
+    }, 3000);
+  }, [showNotification]);
 
   useEffect(() => {
     if (spot.id === parseInt(match.params.id!, 10)) {
@@ -84,11 +96,27 @@ const Spot: React.FC<RouteProps> = ({ match }) => {
   } else {
     return (
       <>
+        {showNotification === true && (
+          <Container>
+            <div className='notification spot__calib-notification--on-top'>
+              Kalibrierung wird gestartet. Bitte kommen Sie in einigen Minuten
+              zurück.
+            </div>
+          </Container>
+        )}
         {isAuthenticated === true && (
           <Container>
-            <button className='button is-small' onClick={handleEditModeClick}>
-              Bearbeiten
-            </button>
+            <div className='buttons'>
+              <button className='button is-small' onClick={handleEditModeClick}>
+                Bearbeiten
+              </button>
+              <button
+                className='button is-small'
+                onClick={handleCalibrationClick}
+              >
+                Kalibrierung Starten
+              </button>
+            </div>
           </Container>
         )}
         <Container>

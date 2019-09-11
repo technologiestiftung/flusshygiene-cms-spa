@@ -14,6 +14,7 @@ import { IFetchSpotOptions } from '../lib/common/interfaces';
 import { fetchSpots } from '../lib/state/reducers/actions/fetch-get-spots';
 import { CardTile } from './spot/CardTile';
 import SpotsMap from './SpotsMap';
+// import { useBanner, BannerContext } from '../contexts/banner';
 
 const Profile: React.FC = () => {
   // ╦  ╦╔═╗╦═╗╔═╗
@@ -28,7 +29,6 @@ const Profile: React.FC = () => {
   const { loading, user, isAuthenticated, getTokenSilently } = useAuth0();
   // const [you, setYou] = useState(user);
   const [token, setToken] = useState<string>();
-  const [init, setInit] = useState(true);
   const [editMode, setEditMode] = useState(false);
   const spots = useSelector((state: RootState) => state.data.spots);
   const truncated = useSelector((state: RootState) => state.data.truncated);
@@ -75,10 +75,7 @@ const Profile: React.FC = () => {
       method: 'GET',
     };
     dispatch(fetchSpots(opts));
-  }, [spots, truncated, dispatch, token, user, user.pgapiData, init]);
-  useEffect(() => {
-    setInit(true);
-  }, []);
+  }, [spots, truncated, dispatch, token, user, user.pgapiData]);
 
   // ╔═╗╦ ╦╔╗╔╔═╗╔╦╗╦╔═╗╔╗╔  ╦ ╦╔═╗╔╗╔╔╦╗╦  ╔═╗╦═╗╔═╗
   // ╠╣ ║ ║║║║║   ║ ║║ ║║║║  ╠═╣╠═╣║║║ ║║║  ║╣ ╠╦╝╚═╗
@@ -92,6 +89,12 @@ const Profile: React.FC = () => {
 
   return (
     <React.Fragment>
+      {/* <BannerContext.Consumer>
+        {(value) => {
+          return <div>Hello Banner</div>;
+        }}
+      </BannerContext.Consumer> */}
+
       <Container>
         {(() => {
           if (loading) {
@@ -145,13 +148,15 @@ const Profile: React.FC = () => {
       {editMode === false && (
         <Container>
           {isAuthenticated !== undefined && isAuthenticated === true && (
-            <button className='button is-small' onClick={handleNewSpot}>
-              Neue Badestelle
-            </button>
+            <div className='buttons'>
+              <button className='button is-small' onClick={handleNewSpot}>
+                Neue Badestelle
+              </button>
+            </div>
           )}
         </Container>
       )}
-      {editMode === false && (
+      {editMode === false && spots !== undefined && (
         <>
           <Container containerClassName={'user__spots-map'}>
             <div ref={mapRef} id='map__container'>

@@ -29,7 +29,7 @@ interface IAnswer {
 
 export const Questionaire: React.FC<{}> = () => {
   const [formReadyToRender, setFormReadyToRender] = useState(false);
-  const [modalIsActive, setmodalIsActive] = useState(false);
+  const [modalIsActive, setmodalIsActive] = useState(true);
   const [questions, setQuestions] = useState();
   // const [questionSet, setQuestionSet] = useState(undefined);
   const [qInfo, setQInfo] = useState('');
