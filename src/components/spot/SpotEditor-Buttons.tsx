@@ -21,7 +21,7 @@ export const SpotEditorButtons: React.FC<{
       </p>
       <p className='control'>
         <button
-          className='button is-is-light'
+          className='button is-light'
           type='button'
           disabled={isSubmitting}
           onClick={handleEditModeClick}

@@ -22,7 +22,6 @@ const SpotsMap: React.FC<IMapsProps> = ({
   lat,
   lon,
 }) => {
-  // console.log('in spotmap', data);
   if (zoom !== undefined) {
     initialViewState.zoom = zoom;
     if (
@@ -35,7 +34,6 @@ const SpotsMap: React.FC<IMapsProps> = ({
       initialViewState.longitude = data[0].longitude;
     }
   }
-  // console.log('in spotsmap', data);
 
   return (
     <DeckGL
@@ -44,30 +42,53 @@ const SpotsMap: React.FC<IMapsProps> = ({
       initialViewState={initialViewState}
       controller={true}
     >
-      {data !== undefined &&
-        data[0] !== undefined &&
-        data[0].id !== DEFAULT_SPOT_ID && (
-          <ScatterplotLayer
-            id={'scatterplot'}
-            data={data}
-            filled={true}
-            getFillColor={(_d: IBathingspot) => [255, 140, 0]}
-            getLineColor={(_d: IBathingspot) => [0, 0, 0]}
-            getPosition={(d: IBathingspot) => {
-              if (d.location !== undefined) {
-                return [d.location.coordinates[0], d.location.coordinates[1]];
-              }
-            }}
-            getRadius={100}
-            lineWidthMinPixels={1}
-            opacity={0.8}
-            pickable={true}
-            radiusMaxPixels={100}
-            radiusMinPixels={1}
-            radiusScale={6}
-            stroked={true}
-          />
-        )}
+      {(() => {
+        if (
+          data !== undefined &&
+          data[0] !== undefined &&
+          data[0].id !== DEFAULT_SPOT_ID
+        ) {
+          const spots: IBathingspot[] = data as IBathingspot[];
+          const filteredSpots = spots.filter((d) => {
+            if (d.location === null || d.location === undefined) {
+              // console.log(d);
+              return;
+            } else {
+              return d;
+            }
+          });
+
+          return (
+            <ScatterplotLayer
+              id={'scatterplot'}
+              data={filteredSpots}
+              filled={true}
+              getFillColor={(_d: IBathingspot) => [255, 140, 0]}
+              getLineColor={(_d: IBathingspot) => [0, 0, 0]}
+              getPosition={(d: IBathingspot) => {
+                if (d.location === null) {
+                  return;
+                }
+                if (
+                  d.location !== undefined &&
+                  d.location.coordinates !== undefined
+                ) {
+                  return [d.location.coordinates[0], d.location.coordinates[1]];
+                }
+              }}
+              getRadius={100}
+              lineWidthMinPixels={1}
+              opacity={0.8}
+              pickable={true}
+              radiusMaxPixels={100}
+              radiusMinPixels={1}
+              radiusScale={6}
+              stroked={true}
+            />
+          );
+        }
+      })()}
+
       <StaticMap
         width={width}
         height={height}

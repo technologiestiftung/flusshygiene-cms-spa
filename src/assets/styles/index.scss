@@ -62,8 +62,16 @@ span.asteriks {
 
 // profile
 
-.card {
-  margin: 0.5em;
+// card
+
+.card__profile--pad {
+  margin: 0.5rem;
+}
+
+.media-content > .title {
+  // white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis !important;
 }
 
 // spoteditor

@@ -292,7 +292,7 @@ export const Questionaire: React.FC<{}> = () => {
                       />
                     </div>
                   </Container>
-                  <Container className={'answer__additional'}>
+                  <Container containerClassName={'answer__additional'}>
                     {aAddInfo !== undefined && (
                       <div className='content notification'>
                         <p>{aAddInfo}</p>

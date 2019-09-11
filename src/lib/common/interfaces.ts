@@ -18,6 +18,8 @@ export interface IFetchOptions {
 export interface IFetchSpotOptions extends IFetchOptions {
   url: string;
   update?: boolean;
+  updateSingle?: boolean;
+  updateAll?: boolean;
 }
 
 export interface IBathingspot {

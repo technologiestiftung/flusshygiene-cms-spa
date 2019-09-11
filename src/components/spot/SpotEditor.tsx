@@ -116,16 +116,16 @@ export const SpotEditor: React.FC<{
   const { getTokenSilently } = useAuth0();
 
   const transformedSpot = nullValueTransform(initialSpot);
-  console.log(transformedSpot);
+  // console.log(transformedSpot);
   // ╦═╗┌─┐┌┬┐┬ ┬─┐ ┬
   // ╠╦╝├┤  │││ │┌┴┬┘
   // ╩╚═└─┘─┴┘└─┘┴ └─
   const postDone = useSelector((state: RootState) => state.postSpot.loading);
   const dispatch = useDispatch();
 
-  // ╔═╗┌─┐┌─┐┌─┐┌─┐┌┬┐  ╦ ╦┌─┐┌─┐┬┌─┌─┐
-  // ║╣ ├┤ ├┤ ├┤ │   │   ╠═╣│ ││ │├┴┐└─┐
-  // ╚═╝└  └  └─┘└─┘ ┴   ╩ ╩└─┘└─┘┴ ┴└─┘
+  // ╔═╗╔═╗╔═╗╔═╗╔═╗╔╦╗
+  // ║╣ ╠╣ ╠╣ ║╣ ║   ║
+  // ╚═╝╚  ╚  ╚═╝╚═╝ ╩
   useEffect(() => {
     if (csvFile === undefined) return;
     const config: Papa.ParseConfig = {
@@ -154,7 +154,6 @@ export const SpotEditor: React.FC<{
                   message:
                     'Daten entsprechen nicht dem Schema Date (YYYY-MM-DD), conc_ie (integer > 0), conc_ec (integer > 0)',
                 };
-                // console.log(obj);
                 setCSVValidationErrors((prevErrors) => {
                   return [...prevErrors, obj];
                 });
@@ -227,6 +226,8 @@ export const SpotEditor: React.FC<{
       },
       body: JSON.stringify(body),
       update: true,
+      updateSingle: true,
+      updateAll: true,
     };
 
     console.log('post options', postSpotOpts);
@@ -254,7 +255,7 @@ export const SpotEditor: React.FC<{
   };
 
   return (
-    <div>
+    <>
       <Formik
         enableReinitialize={true}
         initialValues={transformedSpot}
@@ -316,196 +317,187 @@ export const SpotEditor: React.FC<{
           );
 
           return (
-            <div>
-              <div className=''>
-                <Form style={{ paddingTop: '10px' }}>
-                  <button
-                    className='button is-primary'
-                    type='submit'
-                    disabled={props.isSubmitting}
-                    // onClick={(event: React.ChangeEvent<any>) => {
-                    //   console.log('Hit submit', event);
-                    //   handleSubmit(event);
-                    // }}
-                  >
-                    Speichern
-                  </button>
-                  <SpotEditorButtons
-                    isSubmitting={props.isSubmitting}
-                    // handleSubmit={props.handleSubmit}
-                    handleEditModeClick={handleEditModeClick}
-                  />
-                  {props.values !== undefined && (
-                    <SpotEditorBox title={'Geo Daten'}>
-                      <FormikSpotEditorMap
-                        width={800}
-                        height={600}
-                        data={[props.values]}
-                        editMode={editMode}
-                        // selectedIndex={selectedIndex}
-                        // activeEditor={activeEditor}
-                        handleUpdates={handleGeoJsonUpdates}
-                        defaultFormikSetFieldValues={props.setFieldValue}
-                      />
-                      {/* </div> */}
-                    </SpotEditorBox>
-                  )}
-                  <SpotEditorBox title={'Basis Daten'}>
-                    {formSectionBuilder(patchedBasisData, props.handleChange)}
-                  </SpotEditorBox>
-                  <SpotEditorBox title={'Messwerte'}>
-                    {newSpot === true && (
-                      <div className='content'>
-                        <p>
-                          Bitte speichern Sie die Badestelle bevor Sie Daten
-                          hochladen.
-                        </p>
-                      </div>
-                    )}
-                    {
-                      <SpotEditorFile
-                        name={'csvFile'}
-                        type={'file'}
-                        label={'Messwerte CSV'}
-                        disabled={newSpot === true ? true : false}
-                        onChange={(
-                          event: React.ChangeEvent<HTMLInputElement>,
-                        ) => {
-                          setCSVValidationErrors([]);
-                          setParsingErrors([]);
-                          if (
-                            event.currentTarget.files === null ||
-                            event.currentTarget.files.length < 1
-                          )
-                            return;
-                          const file = event.currentTarget.files[0];
-                          // console.log('file', file);
-                          props.setFieldValue('csvFile', file);
-                          setCsvFile(file);
-
-                          // let reader = new FileReader();
-                          // reader.readAsText(file);
-                          // reader.onerror = (event: ProgressEvent) => {
-                          //   if (reader.error) {
-                          //     console.error(reader.error);
-                          //   }
-                          // };
-                          // reader.onload = (_event: ProgressEvent) => {
-                          //   // if (event === null || event.target === null) return;
-                          //   const csv = reader.result;
-                          //   const validate = (csv) => csv;
-                          //   console.log(validate(csv));
-                          // };
-                          // reader.onloadend = () => {
-                          //   // console.log(reader.result);
-                          //   console.log(
-                          //     'props.values.file',
-                          //     props.values.csvFile,
-                          //   );
-                          // };
-                        }}
-                      ></SpotEditorFile>
-                    }
-                    {allMeasurmentsValid === true && (
-                      <div>
-                        <div className='content'>
-                          <p>Alle hochgeladenen Daten sind valide,</p>
-                        </div>
-                      </div>
-                    )}
-                    {csvValidationErrors.length > 0 && (
-                      <div className=''>
-                        <h3>CSV Daten Report</h3>
-                        <table className='table'>
-                          <thead>
-                            <tr>
-                              <th>{'Nummer'}</th>
-                              <th>{'Zeile'}</th>
-                              <th>{'Beschrebung'}</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {csvValidationErrors.map((ele, i) => {
-                              return (
-                                <tr key={i}>
-                                  <td>{i}</td>
-                                  <td>{ele.row}</td>
-                                  <td>{ele.message}</td>
-                                </tr>
-                              );
-                            })}
-                          </tbody>
-                        </table>
-                      </div>
-                    )}
-                    {parsingErrors !== undefined && parsingErrors.length > 0 && (
-                      <div className=''>
-                        <h3>CSV Struktur Report</h3>
-                        <table className='table'>
-                          <thead>
-                            <tr>
-                              <th>{'Nummer'}</th>
-                              <th>{'Zeile'}</th>
-                              <th>{'Beschreibung'}</th>
-                              <th>{'Fehler Code'}</th>
-                              <th>{'Type'}</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {parsingErrors.map((err, i) => {
-                              return (
-                                <tr key={i}>
-                                  <td>{i}</td>
-                                  <td>{err.row}</td>
-                                  <td>{err.message}</td>
-                                  <td>{err.code}</td>
-                                  <td>{err.type}</td>
-                                </tr>
-                              );
-                            })}
-                          </tbody>
-                        </table>
-                      </div>
-                    )}
-                  </SpotEditorBox>
-                  <SpotEditorBox title={'Bilder'}></SpotEditorBox>
-                  <SpotEditorBox title={'Hygienische Beeinträchtigung durch:'}>
-                    {formSectionBuilder(
-                      patchedInfluenceData,
-                      props.handleChange,
-                    )}
-                  </SpotEditorBox>
-                  <SpotEditorBox title={'Zuständiges Gesundheitsamt'}>
-                    {formSectionBuilder(
-                      healthDepartmentData,
-                      props.handleChange,
-                    )}
-                  </SpotEditorBox>
-
-                  <SpotEditorBox title={'Zusatz Daten'}>
-                    {formSectionBuilder(
-                      patchedAdditionalData,
-                      props.handleChange,
-                    )}
-                  </SpotEditorBox>
-                  {/* </fieldset>
-                  </div> */}
-                  <SpotEditorButtons
-                    // handleSubmit={props.handleSubmit}
-                    isSubmitting={props.isSubmitting}
-                    handleEditModeClick={handleEditModeClick}
-                  />
-                </Form>
+            <Form>
+              <div className='buttons'>
+                <button
+                  className='button is-primary is-small'
+                  type='submit'
+                  disabled={props.isSubmitting}
+                  // onClick={(event: React.ChangeEvent<any>) => {
+                  //   console.log('Hit submit', event);
+                  //   handleSubmit(event);
+                  // }}
+                >
+                  Speichern
+                </button>
+                <button
+                  className='button is-light is-small'
+                  type='button'
+                  disabled={props.isSubmitting}
+                  onClick={handleEditModeClick}
+                  data-testid={'handle-edit-mode-button'}
+                >
+                  Abbrechen
+                </button>
               </div>
-              {/* <button
-                className='modal-close is-large'
-                aria-label='close'
-                onClick={handleEditModeClick}
-              ></button> */}
-            </div>
+              {/* <SpotEditorButtons
+                    isSubmitting={props.isSubmitting}
+                    // handleSubmit={props.handleSubmit}
+                    handleEditModeClick={handleEditModeClick}
+                  /> */}
+              {props.values !== undefined && (
+                <SpotEditorBox title={'Geo Daten'}>
+                  <FormikSpotEditorMap
+                    width={800}
+                    height={600}
+                    data={[props.values]}
+                    editMode={editMode}
+                    // selectedIndex={selectedIndex}
+                    // activeEditor={activeEditor}
+                    handleUpdates={handleGeoJsonUpdates}
+                    defaultFormikSetFieldValues={props.setFieldValue}
+                  />
+                  {/* </div> */}
+                </SpotEditorBox>
+              )}
+              <SpotEditorBox title={'Basis Daten'}>
+                {formSectionBuilder(patchedBasisData, props.handleChange)}
+              </SpotEditorBox>
+              <SpotEditorBox title={'Messwerte'}>
+                {newSpot === true && (
+                  <div className='content'>
+                    <p>
+                      Bitte speichern Sie die Badestelle bevor Sie Daten
+                      hochladen.
+                    </p>
+                  </div>
+                )}
+                {
+                  <SpotEditorFile
+                    name={'csvFile'}
+                    type={'file'}
+                    label={'Messwerte CSV'}
+                    disabled={newSpot === true ? true : false}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      setCSVValidationErrors([]);
+                      setParsingErrors([]);
+                      if (
+                        event.currentTarget.files === null ||
+                        event.currentTarget.files.length < 1
+                      )
+                        return;
+                      const file = event.currentTarget.files[0];
+                      // console.log('file', file);
+                      props.setFieldValue('csvFile', file);
+                      setCsvFile(file);
+
+                      // let reader = new FileReader();
+                      // reader.readAsText(file);
+                      // reader.onerror = (event: ProgressEvent) => {
+                      //   if (reader.error) {
+                      //     console.error(reader.error);
+                      //   }
+                      // };
+                      // reader.onload = (_event: ProgressEvent) => {
+                      //   // if (event === null || event.target === null) return;
+                      //   const csv = reader.result;
+                      //   const validate = (csv) => csv;
+                      //   console.log(validate(csv));
+                      // };
+                      // reader.onloadend = () => {
+                      //   // console.log(reader.result);
+                      //   console.log(
+                      //     'props.values.file',
+                      //     props.values.csvFile,
+                      //   );
+                      // };
+                    }}
+                  ></SpotEditorFile>
+                }
+                {allMeasurmentsValid === true && (
+                  <div>
+                    <div className='content'>
+                      <p>Alle hochgeladenen Daten sind valide,</p>
+                    </div>
+                  </div>
+                )}
+                {csvValidationErrors.length > 0 && (
+                  <div className=''>
+                    <h3>CSV Daten Report</h3>
+                    <table className='table'>
+                      <thead>
+                        <tr>
+                          <th>{'Nummer'}</th>
+                          <th>{'Zeile'}</th>
+                          <th>{'Beschrebung'}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {csvValidationErrors.map((ele, i) => {
+                          return (
+                            <tr key={i}>
+                              <td>{i}</td>
+                              <td>{ele.row}</td>
+                              <td>{ele.message}</td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+                {parsingErrors !== undefined && parsingErrors.length > 0 && (
+                  <div className=''>
+                    <h3>CSV Struktur Report</h3>
+                    <table className='table'>
+                      <thead>
+                        <tr>
+                          <th>{'Nummer'}</th>
+                          <th>{'Zeile'}</th>
+                          <th>{'Beschreibung'}</th>
+                          <th>{'Fehler Code'}</th>
+                          <th>{'Type'}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {parsingErrors.map((err, i) => {
+                          return (
+                            <tr key={i}>
+                              <td>{i}</td>
+                              <td>{err.row}</td>
+                              <td>{err.message}</td>
+                              <td>{err.code}</td>
+                              <td>{err.type}</td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </SpotEditorBox>
+              <SpotEditorBox title={'Bilder'}></SpotEditorBox>
+              <SpotEditorBox title={'Hygienische Beeinträchtigung durch:'}>
+                {formSectionBuilder(patchedInfluenceData, props.handleChange)}
+              </SpotEditorBox>
+              <SpotEditorBox title={'Zuständiges Gesundheitsamt'}>
+                {formSectionBuilder(healthDepartmentData, props.handleChange)}
+              </SpotEditorBox>
+
+              <SpotEditorBox title={'Zusatz Daten'}>
+                {formSectionBuilder(patchedAdditionalData, props.handleChange)}
+              </SpotEditorBox>
+              {/* </fieldset>
+                  </div> */}
+              <SpotEditorButtons
+                // handleSubmit={props.handleSubmit}
+                isSubmitting={props.isSubmitting}
+                handleEditModeClick={handleEditModeClick}
+              />
+            </Form>
           );
         }}
       </Formik>
-    </div>
+    </>
   );
 };

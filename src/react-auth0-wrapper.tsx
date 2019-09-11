@@ -34,6 +34,7 @@ export const Auth0Provider = ({
   const [popupOpen, setPopupOpen] = useState(false);
 
   useEffect(() => {
+    const abortController = new AbortController();
     const initAuth0 = async () => {
       const auth0FromHook = await createAuth0Client(
         initOptions as Auth0ClientOptions,
@@ -56,7 +57,6 @@ export const Auth0Provider = ({
           'content-type': 'application/json',
           Authorization: `Bearer ${token}`,
         };
-        const abortController = new AbortController();
 
         const signal = abortController.signal;
 
@@ -82,6 +82,7 @@ export const Auth0Provider = ({
     };
     initAuth0();
     // eslint-disable-next-line
+    return () => abortController.abort();
   }, []);
 
   const loginWithPopup = async (params = {}) => {

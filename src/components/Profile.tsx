@@ -28,6 +28,7 @@ const Profile: React.FC = () => {
   const { loading, user, isAuthenticated, getTokenSilently } = useAuth0();
   // const [you, setYou] = useState(user);
   const [token, setToken] = useState<string>();
+  const [init, setInit] = useState(true);
   const [editMode, setEditMode] = useState(false);
   const spots = useSelector((state: RootState) => state.data.spots);
   const truncated = useSelector((state: RootState) => state.data.truncated);
@@ -36,15 +37,6 @@ const Profile: React.FC = () => {
   // ╔═╗╔═╗╔═╗╔═╗╔═╗╔╦╗╔═╗
   // ║╣ ╠╣ ╠╣ ║╣ ║   ║ ╚═╗
   // ╚═╝╚  ╚  ╚═╝╚═╝ ╩ ╚═╝
-  // useEffect(() => {
-  //   // console.log(user);
-  //   if (user.pgapiData === undefined) {
-  //     console.log('got api data');
-  //     setYou({ ...user });
-  //   }
-  //   // return () => {};
-  // }, [you, user]);
-
   useEffect(() => {
     async function getToken() {
       try {
@@ -83,7 +75,11 @@ const Profile: React.FC = () => {
       method: 'GET',
     };
     dispatch(fetchSpots(opts));
-  }, [spots, truncated, dispatch, token, user, user.pgapiData]);
+  }, [spots, truncated, dispatch, token, user, user.pgapiData, init]);
+  useEffect(() => {
+    setInit(true);
+  }, []);
+
   // ╔═╗╦ ╦╔╗╔╔═╗╔╦╗╦╔═╗╔╗╔  ╦ ╦╔═╗╔╗╔╔╦╗╦  ╔═╗╦═╗╔═╗
   // ╠╣ ║ ║║║║║   ║ ║║ ║║║║  ╠═╣╠═╣║║║ ║║║  ║╣ ╠╦╝╚═╗
   // ╚  ╚═╝╝╚╝╚═╝ ╩ ╩╚═╝╝╚╝  ╩ ╩╩ ╩╝╚╝═╩╝╩═╝╚═╝╩╚═╚═╝
@@ -96,7 +92,7 @@ const Profile: React.FC = () => {
 
   return (
     <React.Fragment>
-      <Container className='user__info'>
+      <Container>
         {(() => {
           if (loading) {
             return <div>Loading...</div>;
@@ -149,7 +145,7 @@ const Profile: React.FC = () => {
       {editMode === false && (
         <Container>
           {isAuthenticated !== undefined && isAuthenticated === true && (
-            <button className='button' onClick={handleNewSpot}>
+            <button className='button is-small' onClick={handleNewSpot}>
               Neue Badestelle
             </button>
           )}
@@ -157,7 +153,7 @@ const Profile: React.FC = () => {
       )}
       {editMode === false && (
         <>
-          <Container className={'user__spots-map'}>
+          <Container containerClassName={'user__spots-map'}>
             <div ref={mapRef} id='map__container'>
               <SpotsMap
                 width={mapDims.width}
@@ -166,7 +162,7 @@ const Profile: React.FC = () => {
               />
             </div>
           </Container>
-          <Container className={'user__spots'}>
+          <Container containerClassName={'user__spots'}>
             <div className='tile is-ancestor'>
               <div style={{ flexWrap: 'wrap' }} className='tile is-parent'>
                 {spots.map((obj, i) => {

@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { useFormikContext } from 'formik';
 import DeckGL from '@deck.gl/react';
 import { MapController } from '@deck.gl/core';
 import {
@@ -6,6 +7,7 @@ import {
   IGeoJson,
   MapEditModes,
   IGeoJsonFeature,
+  IBathingspotExtend,
 } from '../../lib/common/interfaces';
 import { EditableGeoJsonLayer } from '@nebula.gl/layers';
 import { useMapResizeEffect } from '../../hooks/map-hooks';
@@ -40,6 +42,7 @@ const FormikSpotEditorMap: React.FC<IMapsEditorProps> = ({
   defaultFormikSetFieldValues,
   handleUpdates,
 }) => {
+  const { values, setFieldValue } = useFormikContext<IBathingspotExtend>();
   const mapRef = useRef<HTMLDivElement>(null);
   const mapDims = useMapResizeEffect(mapRef);
   const [editMode, setEditMode] = useState<MapEditModes>('view');
@@ -75,93 +78,74 @@ const FormikSpotEditorMap: React.FC<IMapsEditorProps> = ({
   // const [areaMode, setAreaMode] = useState<MapEditModes>('view');
 
   useEffect(() => {
-    if (data === undefined) return;
-    if (data[0] === undefined) return;
+    // if (data === undefined) return;
+    // if (data[0] === undefined) return;
     if (geoData === undefined) return;
-    const points = geoData.features.filter(
-      (ele) => ele.geometry.type === 'Point',
-    );
-    const polies = geoData.features.filter(
-      (ele) => ele.geometry.type === 'Polygon',
-    );
+    if (geoData.features === undefined) return;
+    const points = geoData.features.filter((ele) => {
+      console.log('got a poin', ele);
+
+      if (ele.geometry.type === 'Point') {
+        return ele;
+      }
+    });
+    const polies = geoData.features.filter((ele) => {
+      console.log('got a polygon', ele);
+      if (ele.geometry.type === 'Polygon') {
+        return ele;
+      }
+    });
     if (polies.length > 0) {
-      data[0].area = polies[0].geometry;
+      // data[0].area = polies[0].geometry;
+      setFieldValue('area', polies[0].geometry);
+      // defaultFormikSetFieldValues('area', polies[0].geometry);
     }
     if (points.length > 0) {
-      data[0].location = points[0].geometry; // geoData.features[0].geometry;
-      // defaultFormikSetFieldValues(
-      //   'latitude',
-      //   points[0].geometry.coordinates[1],
-      // );
-      // defaultFormikSetFieldValues(
-      //   'longitude',
-      //   points[0].geometry.coordinates[0],
-      // );
+      // data[0].location = points[0].geometry; // geoData.features[0].geometry;
+      setFieldValue('location', points[0].geometry);
+      // defaultFormikSetFieldValues('location', points[0].geometry);
     }
-  }, [geoData, data, defaultFormikSetFieldValues]);
-  // useEffect(() => {
-  //   if (data !== undefined) {
-  //     if (data[0] !== undefined) {
-  //       setLocationMode(editMode);
-  //       setAreaMode(editMode);
-  //     }
-  //   }
-  // }, [data, editMode]);
+  }, [geoData, setFieldValue]);
+
   useEffect(() => {
     if (data === undefined) return;
     if (data[0] === undefined) return;
-    if (data[0].location === undefined) return;
-    if (data[0].area === undefined) return;
-    // const geojsonLocation: IGeoJson = {
-    //   type: 'FeatureCollection',
-    //   features: [
-    //     {
-    //       type: 'Feature',
-    //       geometry: data[0].location,
-    //     },
-    //   ],
-    // };
-    const loc: IGeoJsonFeature = {
-      type: 'Feature',
-      geometry: data[0].location,
-      properties: {
-        fhType: 'primary',
-      },
-    };
-    const area: IGeoJsonFeature = {
-      type: 'Feature',
-      geometry: data[0].area,
-      properties: {
-        fhType: 'primary',
-        // guideType: 'tentative',
-        // editHandleType: 'existing',
-      },
-    };
-    // const geojsonArea: IGeoJson = {
-    //   type: 'FeatureCollection',
-    //   features: [
-    //     {
-    //       type: 'Feature',
-    //       geometry: data[0].area,
-    //       properties: {
-    //         guideType: 'tentative',
-    //         editHandleType: 'existing',
-    //       },
-    //     },
-    //   ],
-    // };
+
+    const features: IGeoJsonFeature[] = [];
+
+    if (data[0].location !== undefined) {
+      console.log('location in second hook', data[0].location);
+      const loc: IGeoJsonFeature = {
+        type: 'Feature',
+        geometry: data[0].location,
+        properties: {
+          fhType: 'primary',
+        },
+      };
+      features.push(loc);
+    }
+    if (data[0].area !== undefined) {
+      const area: IGeoJsonFeature = {
+        type: 'Feature',
+        geometry: data[0].area,
+        properties: {
+          fhType: 'primary',
+          // guideType: 'tentative',
+          // editHandleType: 'existing',
+        },
+      };
+      features.push(area);
+    }
+
+    console.log('the features we have found', features);
     const geo: IGeoJson = {
       type: 'FeatureCollection',
-      features: [loc, area],
+      features: features,
     };
-    // setArea(geojsonArea);
-    // setLocation(geojsonLocation);
-    setGeoData(geo);
 
-    return () => {
-      // cleanup
-    };
-  }, [data]);
+    // setSelectedIndex([]);
+    setGeoData(geo);
+  }, []);
 
   if (zoom !== undefined) {
     initialViewState.zoom = zoom;
@@ -189,109 +173,15 @@ const FormikSpotEditorMap: React.FC<IMapsEditorProps> = ({
     // },
     pickingRadius: 20,
     pickingDepth: 1,
-    // onLayerClick: (event) => {
-    //   console.log('layer click event', event);
-    // },
   };
-  // const areaLayer = new EditableGeoJsonLayer({
-  //   id: 'area',
-  //   data: area,
-  //   mode: areaMode,
-  //   onStopDragging: () => {
-  //     if (area === undefined) return;
 
-  //     // setIn(formik.values, 'area', area.features[0].geometry);
-
-  //     // setFieldValue('area', area.features[0].geometry, false);
-  //     // setFieldTouched('area', true, false);
-
-  //     // setFieldValue('location', location.features[0].geometry, false);
-  //   },
-  //   onEdit: ({ updatedData, editContext, editType }) => {
-  //     console.log('updated data from nebula area');
-  //     console.log(updatedData);
-  //     console.log(editContext);
-  //     console.log(editType);
-  //     setArea(updatedData);
-  //   },
-  //   ...commonProps,
-  // });
   const geoLayer = new EditableGeoJsonLayer({
     ...commonProps,
     selectedFeatureIndexes: selectedIndex,
     id: 'location',
     data: geoData,
     mode: editMode,
-    onStopDragging: () => {
-      // if (location === undefined) return;
-      // const event: React.ChangeEvent<any> = {
-      //   bubbles: true,
-      //   cancelable: false,
-      //   currentTarget: {},
-      //   nativeEvent: new Event('location'),
-      //   target: {},
-      //   defaultPrevented: true,
-      //   eventPhase: 0,
-      //   isTrusted: true,
-      //   preventDefault: () => {},
-      //   isDefaultPrevented: () => true,
-      //   stopPropagation: () => {},
-      //   isPropagationStopped: () => true,
-      //   persist: () => {},
-      //   timeStamp: Date.now(),
-      //   type: 'location',
-      // };
-      // // var ev2 = new Event('input', { bubbles: true });
-      // console.log('stop dragging');
-      // defaultFormikSetFieldValues(
-      //   'latitude',
-      //   location.features[0].geometry.coordinates[1],
-      // );
-      // defaultFormikSetFieldValues(
-      //   'longitude',
-      //   location.features[0].geometry.coordinates[0],
-      // );
-      // handleUpdates(event, location.features[0].geometry);
-      // setValues({ ...values, location: location.features[0].geometry });
-      // formik.setFieldValue('location', location.features[0].geometry);
-      // formik.setValues({
-      //   ...formik.values,
-      //   ...setIn(formik.values, 'location', location.features[0].geometry),
-      // });
-      // formik.setFieldTouched('location', true, false);
-      // formik.setFormikState((prevState: FormikState<IBathingspot>) => {
-      //   return {
-      //     ...prevState,
-      //     values: setIn(
-      //       prevState.values,
-      //       'location',
-      //       location.features[0].geometry,
-      //     ),
-      //     touched: setIn(prevState.touched, 'location', true),
-      //   };
-      // });
-      // formik.values = setIn(
-      //   formik.values,
-      //   'location',
-      //   location.features[0].geometry,
-      // );
-      // formik.dirty = true;
-      // formik. setIn(formik.errors, 'location', undefined);
-      // formik.touched = setIn(formik.touched, 'location', true);
-      // setFieldValue('location', location.features[0].geometry, false);
-      // setFieldTouched('location', true, false);
-      // setFieldValue('location', location.features[0].geometry, false);
-      // if (geoData !== undefined) {
-      //   defaultFormikSetFieldValues(
-      //     'latitude',
-      //     geoData.features[0].geometry.coordinates[1],
-      //   );
-      //   defaultFormikSetFieldValues(
-      //     'longitude',
-      //     geoData.features[0].geometry.coordinates[0],
-      //   );
-      // }
-    },
+    onStopDragging: () => {},
     onEdit: ({ updatedData, editContext }) => {
       console.log('updated data from nebula');
       console.log(editContext);
