@@ -144,6 +144,7 @@ const Spot: React.FC<RouteProps> = ({ match }) => {
                     name={spot.name}
                     nameLong={spot.nameLong}
                     street={spot.street}
+                    location={spot.location}
                     postalCode={(() => {
                       if (
                         spot.postalCode !== undefined &&
@@ -154,8 +155,6 @@ const Spot: React.FC<RouteProps> = ({ match }) => {
                       return '';
                     })()}
                     city={spot.city}
-                    latitude={spot.latitude}
-                    longitude={spot.longitude}
                     website={spot.website}
                   />
                   {/* </div> */}
