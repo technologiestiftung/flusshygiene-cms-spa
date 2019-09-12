@@ -146,12 +146,12 @@ const Spot: React.FC<RouteProps> = ({ match }) => {
               >
                 Regendaten Kalibrierung Starten
               </button>
-              <button
+              {/* <button
                 className='button is-small'
                 onClick={handleCalibrationClick}
               >
                 Regendaten Kalibrierung Starten
-              </button>
+              </button> */}
             </div>
           </Container>
         )}
