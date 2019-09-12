@@ -25,7 +25,7 @@ export const setupBasisData: (
       {
         name: 'name',
         type: 'text',
-        label: 'Name',
+        label: 'Name *',
       },
       { name: 'nameLong', type: 'text', label: 'Langer Name' },
       {

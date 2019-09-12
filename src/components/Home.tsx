@@ -69,20 +69,50 @@ const Home: React.FC = () => {
         {/* <div className='column is-10'> */}
         <h1 className='title is-1'>Flusshygiene</h1>
         <div className='content'>
+          <h2 className='title is-2'>Herzlich Willkommen,</h2>
           <p>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat. Duis aute irure dolor in
-            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-            culpa qui officia deserunt mollit anim id est laborum.
-            <Link to={`/${'profile'}`}>
-              Badestellen Bearbeiten/Erstellen{' '}
-            </Link>{' '}
-            oder{' '}
+            auf dieser Webplattform stehen dem Nutzer zwei wesentliche
+            Erzeugnisse des Forschungsprojekts FLUSSHYGIENE zu Verfügung. Das
+            Projekt FLUSSHYGIENE befasste sich drei Jahre mit der Thematik des
+            Flussbadens in Deutschland. Das Flussbaden wird im Allgemeinen immer
+            beliebter und vielerorts werden Flüsse bereits heute zum Baden
+            genutzt. Dennoch gibt es an Flüssen spezielle Gefahren, wie starke
+            Strömungen, die Schifffahrt sowie eine oft schwankende
+            Wasserqualität, die beim Flussbaden berücksichtigt werden müssen,
+            damit die Gesundheit von Badenden nicht übermäßig gefährdet wird.
+          </p>
+          <h3 className='title is-3'>
+            Tool zur Erstbewertung neuer Badegewässer
+          </h3>
+          <p>
+            Um eine Einschätzung über die Eignung eines neuen
+            Badegewässerstandortes durchführen zu können, wurde im Projekt
+            FLUSSHYGIENE ein checklistenbasiertes Bewertungsinstrument neuer,
+            potenzieller Badegewässerstandorte entwickelt. Dieser soll dem
+            Nutzer eine erste Einschätzung ermöglichen, ob die Eröffnung eines
+            Badegewässer an einem bestimmten Standort wahrscheinlich ist. <br />
             <Link to={`/${RouteNames.questionnaire}`}>
               zur Standortbewertung
+            </Link>
+          </p>
+          <h3 className='title is-3'>Tool zum Aufbau von Frühwarnsystem</h3>
+          <p>
+            Im Projekt FLUSSHYGIENE wurde ein neuer Ansatz zum Aufbau von
+            Frühwarnsystemen entwickelt, der den Ansatz der Langzeitbewertung
+            der EG-Badegewässerrichtlinie auf tägliche Vorhersagen überträgt.
+            Ein solcher Ansatz fehlte bisher und eine Bewertung der
+            Badegewässerqualität fand bisher ausschließlich rückblickend statt.
+            Der Ansatz kann an allen Typen von Badegewässer angewendet werden.
+          </p>
+          <p>
+            Die im Projekt entwickelte Methodik, basiert auf statistischen
+            Modellierungsansätzen und im Projekt entwickelten Vorhersage- und
+            Modelvalidierungskriterien. Die wesentlichen Schritte des
+            Modellaufbaus und der Validierung wurden auf dieser Webplattform
+            automatisiert, sodass die Methodik nun zuständigen Behörden sowie
+            Betreibern von Badegewässern zur Verfügung steht. <br />
+            <Link to={`/${'profile'}`}>
+              zum Badestellen Bearbeiten/Erstellen
             </Link>
           </p>
         </div>

@@ -42,7 +42,7 @@ const FormikSpotEditorMap: React.FC<IMapsEditorProps> = ({
   defaultFormikSetFieldValues,
   handleUpdates,
 }) => {
-  const { values, setFieldValue } = useFormikContext<IBathingspotExtend>();
+  const { setFieldValue } = useFormikContext<IBathingspotExtend>();
   const mapRef = useRef<HTMLDivElement>(null);
   const mapDims = useMapResizeEffect(mapRef);
   const [editMode, setEditMode] = useState<MapEditModes>('view');
@@ -83,17 +83,17 @@ const FormikSpotEditorMap: React.FC<IMapsEditorProps> = ({
     if (geoData === undefined) return;
     if (geoData.features === undefined) return;
     const points = geoData.features.filter((ele) => {
-      console.log('got a poin', ele);
-
       if (ele.geometry.type === 'Point') {
         return ele;
       }
+      return null;
     });
     const polies = geoData.features.filter((ele) => {
       console.log('got a polygon', ele);
       if (ele.geometry.type === 'Polygon') {
         return ele;
       }
+      return null;
     });
     if (polies.length > 0) {
       // data[0].area = polies[0].geometry;
@@ -145,7 +145,8 @@ const FormikSpotEditorMap: React.FC<IMapsEditorProps> = ({
 
     // setSelectedIndex([]);
     setGeoData(geo);
-  }, []);
+    //  eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [setGeoData]);
 
   if (zoom !== undefined) {
     initialViewState.zoom = zoom;
@@ -217,78 +218,80 @@ const FormikSpotEditorMap: React.FC<IMapsEditorProps> = ({
     editMode === mode ? 'is-active' : '';
   return (
     <>
-      <div className={`dropdown ${isActive ? 'is-active' : ''} is-small`}>
-        <div
-          className='dropdown-trigger'
-          aria-haspopup='true'
-          aria-controls='dropdown-menu'
-        >
-          <button
-            className='button is-small'
+      <div className='buttons'>
+        <div className={`dropdown ${isActive ? 'is-active' : ''} is-small`}>
+          <div
+            className='dropdown-trigger'
             aria-haspopup='true'
             aria-controls='dropdown-menu'
-            // disabled={isDisabled}
-            onClick={(event) => {
-              event.preventDefault();
-              setIsActive(!isActive);
-            }}
           >
-            <span style={{ paddingRight: '0.5em' }}>{`Bearbeitungs Modus: ${
-              dropdownTexts[editMode] !== undefined
-                ? dropdownTexts[editMode].text
-                : ''
-            }`}</span>
-            <span>
-              <IconAngleDown />
-            </span>
-          </button>
-        </div>
-        <div className='dropdown-menu' id='dropdown-menu' role='menu'>
-          <div className='dropdown-content'>
-            <a
-              href='#/'
-              className={`dropdown-item ${setActiveMode('view')}`}
-              onClick={handleClick}
-              id={'view'}
+            <button
+              className='button is-small'
+              aria-haspopup='true'
+              aria-controls='dropdown-menu'
+              // disabled={isDisabled}
+              onClick={(event) => {
+                event.preventDefault();
+                setIsActive(!isActive);
+              }}
             >
-              anzeigen
-            </a>
+              <span style={{ paddingRight: '0.5em' }}>{`Bearbeitungs Modus: ${
+                dropdownTexts[editMode] !== undefined
+                  ? dropdownTexts[editMode].text
+                  : ''
+              }`}</span>
+              <span>
+                <IconAngleDown />
+              </span>
+            </button>
+          </div>
+          <div className='dropdown-menu' id='dropdown-menu' role='menu'>
+            <div className='dropdown-content'>
+              <a
+                href='#/'
+                className={`dropdown-item ${setActiveMode('view')}`}
+                onClick={handleClick}
+                id={'view'}
+              >
+                anzeigen
+              </a>
 
-            <a
-              href='#/'
-              className={`dropdown-item ${setActiveMode('modify')}`}
-              onClick={handleClick}
-              id={'modify'}
-            >
-              modifizieren
-            </a>
-            <a
-              // dirty hack to keep bulma working
-              href='#/'
-              className={`dropdown-item ${setActiveMode('translate')}`}
-              onClick={handleClick}
-              id={'translate'}
-            >
-              bewegen
-            </a>
-            <a
-              // dirty hack to keep bulma working
-              href='#/'
-              className={`dropdown-item ${setActiveMode('drawPoint')}`}
-              onClick={handleClick}
-              id={'drawPoint'}
-            >
-              Punkt zeichnen
-            </a>
-            <a
-              // dirty hack to keep bulma working
-              href='#/'
-              className={`dropdown-item ${setActiveMode('drawPolygon')}`}
-              onClick={handleClick}
-              id={'drawPolygon'}
-            >
-              Polygon zeichnen
-            </a>
+              <a
+                href='#/'
+                className={`dropdown-item ${setActiveMode('modify')}`}
+                onClick={handleClick}
+                id={'modify'}
+              >
+                modifizieren
+              </a>
+              <a
+                // dirty hack to keep bulma working
+                href='#/'
+                className={`dropdown-item ${setActiveMode('translate')}`}
+                onClick={handleClick}
+                id={'translate'}
+              >
+                bewegen
+              </a>
+              <a
+                // dirty hack to keep bulma working
+                href='#/'
+                className={`dropdown-item ${setActiveMode('drawPoint')}`}
+                onClick={handleClick}
+                id={'drawPoint'}
+              >
+                Punkt zeichnen
+              </a>
+              <a
+                // dirty hack to keep bulma working
+                href='#/'
+                className={`dropdown-item ${setActiveMode('drawPolygon')}`}
+                onClick={handleClick}
+                id={'drawPolygon'}
+              >
+                Polygon zeichnen
+              </a>
+            </div>
           </div>
         </div>
       </div>

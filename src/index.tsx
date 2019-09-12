@@ -1,10 +1,12 @@
+import 'react-app-polyfill/ie9';
+import 'react-app-polyfill/stable';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './assets/styles/index.scss';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import { Auth0Provider } from './react-auth0-wrapper';
-import { BannerProvider } from './contexts/banner';
+// import { BannerProvider } from './contexts/banner';
 // import { Auth0Provider } from './react-auth0-wrapper-offline';
 
 // import config from './auth_config.json';

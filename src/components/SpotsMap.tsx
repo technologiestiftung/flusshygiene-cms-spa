@@ -52,7 +52,7 @@ const SpotsMap: React.FC<IMapsProps> = ({
           const filteredSpots = spots.filter((d) => {
             if (d.location === null || d.location === undefined) {
               // console.log(d);
-              return;
+              return null;
             } else {
               return d;
             }

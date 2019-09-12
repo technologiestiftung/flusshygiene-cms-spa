@@ -6,7 +6,7 @@ import { IFormBuildData } from '../../lib/common/interfaces';
 
 export const formSectionBuilder: (
   data: IFormBuildData[],
-  handleChange: (event) => void,
+  handleChange?: (event) => void,
 ) => (JSX.Element | undefined)[] = (data, handleChange) => {
   const res = data.map((datum, i) => {
     switch (datum.type) {
@@ -19,11 +19,11 @@ export const formSectionBuilder: (
             name={datum.name}
             type={datum.type}
             label={datum.label}
-            handleChange={
-              datum.handleChange !== undefined
-                ? datum.handleChange
-                : handleChange
-            }
+            // handleChange={
+            //   datum.handleChange !== undefined
+            //     ? datum.handleChange
+            //     : handleChange
+            // }
           />
         );
       case 'checkbox':

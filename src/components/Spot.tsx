@@ -99,8 +99,8 @@ const Spot: React.FC<RouteProps> = ({ match }) => {
         {showNotification === true && (
           <Container>
             <div className='notification spot__calib-notification--on-top'>
-              Kalibrierung wird gestartet. Bitte kommen Sie in einigen Minuten
-              zurück.
+              Kalibrierung ihrer Badestelle wird gestartet. Bitte kommen Sie in
+              einigen Minuten zurück.
             </div>
           </Container>
         )}
@@ -108,28 +108,29 @@ const Spot: React.FC<RouteProps> = ({ match }) => {
           <Container>
             <div className='buttons'>
               <button className='button is-small' onClick={handleEditModeClick}>
-                Bearbeiten
+                Badestelle Bearbeiten
               </button>
               <button
                 className='button is-small'
                 onClick={handleCalibrationClick}
               >
-                Kalibrierung Starten
+                Regendaten Kalibrierung Starten
+              </button>
+              <button
+                className='button is-small'
+                onClick={handleCalibrationClick}
+              >
+                Regendaten Kalibrierung Starten
               </button>
             </div>
           </Container>
         )}
         <Container>
           <SpotHeader
-            nameLong={(() => {
-              if (spot !== undefined) {
-                return spot.nameLong !== null ? spot.nameLong : spot.name;
-              } else {
-                return null;
-              }
-            })()}
-            water={spot !== undefined ? spot.water : ''}
-            district={spot !== undefined ? spot.district : ''}
+            name={spot.name}
+            nameLong={spot.nameLong}
+            water={spot.water}
+            district={spot.district}
           />
         </Container>
 
@@ -140,6 +141,7 @@ const Spot: React.FC<RouteProps> = ({ match }) => {
                 <div>
                   {/* <div className='column'> */}
                   <SpotLocation
+                    name={spot.name}
                     nameLong={spot.nameLong}
                     street={spot.street}
                     postalCode={(() => {
