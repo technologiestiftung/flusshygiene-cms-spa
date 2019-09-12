@@ -62,7 +62,7 @@ const NavBar = () => {
           >
             Vorhersage Modell
           </NavLink>
-          {isAuthenticated && (
+          {/* {isAuthenticated && (
             <NavLink
               to='/external-api'
               activeClassName={'navbar-item--is-active'}
@@ -70,7 +70,7 @@ const NavBar = () => {
             >
               External API
             </NavLink>
-          )}
+          )} */}
         </div>
         <div className='navbar-end'>
           {!isAuthenticated && (

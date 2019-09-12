@@ -28,7 +28,7 @@ const Spot: React.FC<RouteProps> = ({ match }) => {
     setEditMode(!editMode);
   };
   const handleCalibrationClick = () => {
-    console.log('Start calibration');
+    // console.log('Start calibration');
     setShowNotification((prevState) => !prevState);
   };
   const dispatch = useDispatch();
