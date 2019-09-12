@@ -6,10 +6,10 @@ import { RouteNames } from '../lib/common/enums';
 const NavBar = () => {
   const { isAuthenticated, loginWithRedirect, logout } = useAuth0();
 
-  useEffect(() => {
-    console.log(window.location);
-    return () => {};
-  }, []);
+  // useEffect(() => {
+  //   // console.log(window.location);
+  //   return () => {};
+  // }, []);
 
   return (
     <nav className='navbar' role='navigation' aria-label='main navigation'>
