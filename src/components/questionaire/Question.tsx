@@ -1,3 +1,4 @@
+import React from 'react';
 import { QuestionsContext } from '../../contexts/questions';
 
 import { Link } from 'react-router-dom';
@@ -79,20 +80,22 @@ export const Question: React.FC<{ qid: number }> = ({ qid }) => {
                 isValid,
                 submitForm,
               }) => {
-                <>
-                  <Form>
-                    <Container>
-                      <QToolBar
-                        isSubmitting={isSubmitting}
-                        handleClick={(e: React.ChangeEvent<any>) => {
-                          console.log(e.currentTarget.id);
-                        }}
-                      >
-                        {}
-                      </QToolBar>
-                    </Container>
-                  </Form>
-                </>;
+                return (
+                  <>
+                    <Form>
+                      <Container>
+                        <QToolBar
+                          isSubmitting={isSubmitting}
+                          handleClick={(e: React.ChangeEvent<any>) => {
+                            console.log(e.currentTarget.id);
+                          }}
+                        >
+                          {}
+                        </QToolBar>
+                      </Container>
+                    </Form>
+                  </>
+                );
               }}
             </Formik>
           </>
