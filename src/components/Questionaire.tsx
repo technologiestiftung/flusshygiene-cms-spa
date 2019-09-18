@@ -27,7 +27,7 @@ interface IAnswer {
   answer?: string;
 }
 
-export const Questionaire: React.FC<{}> = () => {
+export const QuestionaireIntro: React.FC<{}> = () => {
   const [formReadyToRender, setFormReadyToRender] = useState(false);
   const [modalIsActive, setmodalIsActive] = useState(true);
   const [questions, setQuestions] = useState();
@@ -44,6 +44,9 @@ export const Questionaire: React.FC<{}> = () => {
     (state: RootState) => state.questionaire.ready,
   );
 
+  useEffect(() => {
+    console.log('current qId', qId);
+  }, [qId]);
   useEffect(() => {
     getQuestions()
       .then((data) => {
@@ -113,7 +116,12 @@ export const Questionaire: React.FC<{}> = () => {
         <div className='modal-background'></div>
         <div className='modal-content'>
           <div className='box'>
-            <QIntro />
+            <QIntro
+              handleClick={(e) => {
+                e.preventDefault();
+                setmodalIsActive(false);
+              }}
+            />
           </div>
           <button
             className='modal-close is-large'
@@ -124,7 +132,8 @@ export const Questionaire: React.FC<{}> = () => {
           ></button>
         </div>
       </div>
-      {formReadyToRender === true && (
+
+      {formReadyToRender === true && answers !== undefined && (
         <Formik
           initialValues={{ answers, answer: undefined }}
           enableReinitialize={true}
@@ -215,7 +224,8 @@ export const Questionaire: React.FC<{}> = () => {
                                 }
                                 break;
                             }
-                            console.log(page);
+                            // submitForm();
+                            console.log('page', page);
                           }}
                         ></Pagination>
                         // </Container>
@@ -255,38 +265,42 @@ export const Questionaire: React.FC<{}> = () => {
                         name='answers'
                         render={(_helpers) => (
                           <div className='control'>
-                            {values.answers.map((ele, index) => {
-                              if (ele.text === null) {
-                                return null;
-                              }
-                              return (
-                                <div key={index} className='field'>
-                                  <Field
-                                    type='radio'
-                                    id={`answer--${index}`}
-                                    name={`answer`}
-                                    className={'answer'}
-                                    // id={`${i}`}
-                                    onChange={(e: React.ChangeEvent<any>) => {
-                                      handleChange(e);
-                                      console.log(e.target);
-                                      setAAddInfo(
-                                        answers[`${index}`].additionalText,
-                                      );
-                                    }}
-                                    required
-                                    value={answers[`${index}`].id}
-                                    // checked={false}
-                                  />
-                                  <label
-                                    htmlFor={`answer--${index}`}
-                                    className='radio label__answer'
-                                  >
-                                    {ele.text}
-                                  </label>
-                                </div>
-                              );
-                            })}
+                            {values.answers !== undefined &&
+                              values.answers.map((ele, index) => {
+                                if (ele === undefined) {
+                                  return null;
+                                }
+                                if (ele.text === null) {
+                                  return null;
+                                }
+                                return (
+                                  <div key={index} className='field'>
+                                    <Field
+                                      type='radio'
+                                      id={`answer--${index}`}
+                                      name={`answer`}
+                                      className={'answer'}
+                                      // id={`${i}`}
+                                      onChange={(e: React.ChangeEvent<any>) => {
+                                        handleChange(e);
+                                        console.log(e.target);
+                                        setAAddInfo(
+                                          answers[`${index}`].additionalText,
+                                        );
+                                      }}
+                                      required
+                                      value={answers[`${index}`].id}
+                                      // checked={false}
+                                    />
+                                    <label
+                                      htmlFor={`answer--${index}`}
+                                      className='radio label__answer'
+                                    >
+                                      {ele.text}
+                                    </label>
+                                  </div>
+                                );
+                              })}
                           </div>
                         )}
                       />

@@ -9,9 +9,10 @@ import PrivateRoute from './components/PrivateRoute';
 import ExternalApi from './components/ExternalApi';
 import Spot from './components/Spot';
 import Info from './components/Info';
-import { Questionaire } from './components/Questionaire';
+import { QuestionaireIntro } from './components/Questionaire';
 import { RouteNames } from './lib/common/enums';
 import history from './lib/history';
+import { Questions } from './components/Test';
 
 const App: React.FC = () => {
   const { loading } = useAuth0();
@@ -38,7 +39,11 @@ const App: React.FC = () => {
             <Route path='/info' component={Info} />
             <Route
               path={`/${RouteNames.questionnaire}`}
-              component={Questionaire}
+              component={QuestionaireIntro}
+            />
+            <Route
+              path={`/${RouteNames.questionnaire}/:id`}
+              component={Questions}
             />
             <PrivateRoute path='/profile' component={Profile} />
             <PrivateRoute path='/external-api' component={ExternalApi} />
