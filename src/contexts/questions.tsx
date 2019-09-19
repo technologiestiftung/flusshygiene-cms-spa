@@ -24,7 +24,7 @@ export const QuestionsProvider = ({ children }) => {
   useEffect(() => {
     (async () => {
       const data = await getQuestions();
-      console.log(data);
+      // console.log(data);
       setQuestions((prevState) => {
         const newState = [...prevState, ...data];
         setAnswers(new Array(newState.length));

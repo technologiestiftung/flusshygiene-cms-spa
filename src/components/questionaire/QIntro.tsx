@@ -1,14 +1,16 @@
 import React from 'react';
 import { Container } from '../Container';
+import { Link } from 'react-router-dom';
+import { RouteNames } from '../../lib/common/enums';
 export const QIntro: React.FC<{
-  handleClick: (e: React.ChangeEvent<any>) => void;
-}> = ({ handleClick }) => {
+  handleClick?: (e: React.ChangeEvent<any>) => void;
+}> = () => {
   return (
     <>
       <Container columnClassName='is-narrow is-offset-9'>
-        <button className='button is-small is-light' onClick={handleClick}>
+        {/* <button className='button is-small is-light' onClick={handleClick}>
           Fenster Schließen
-        </button>
+        </button> */}
       </Container>
       <Container>
         <div className=''>
@@ -142,6 +144,16 @@ export const QIntro: React.FC<{
               </li>
             </ul>
           </div>
+        </div>
+      </Container>
+      <Container>
+        <div className='buttons'>
+          <Link
+            to={`/${RouteNames.questionnaire}/1`}
+            className='button is-primary'
+          >
+            Standortbewertung beginnen!
+          </Link>
         </div>
       </Container>
     </>

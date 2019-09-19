@@ -1,5 +1,4 @@
 import React from 'react';
-// import logo from './logo.svg';
 import NavBar from './components/Navbar';
 import Home from './components/Home';
 import { useAuth0 } from './react-auth0-wrapper';
@@ -9,10 +8,11 @@ import PrivateRoute from './components/PrivateRoute';
 import ExternalApi from './components/ExternalApi';
 import Spot from './components/Spot';
 import Info from './components/Info';
-import { QuestionaireIntro } from './components/Questionaire';
 import { RouteNames } from './lib/common/enums';
 import history from './lib/history';
-import { Questions } from './components/Test';
+import { QuestionsIntro } from './components/QuestionsIntro';
+import { QA } from './components/questionaire/QA';
+import { Page404 } from './components/Page404';
 
 const App: React.FC = () => {
   const { loading } = useAuth0();
@@ -37,16 +37,18 @@ const App: React.FC = () => {
             <Route path='/' exact component={Home} />
             <PrivateRoute path='/badestellen/:id' component={Spot} />
             <Route path='/info' component={Info} />
-            <Route
+            {/* <Route
               path={`/${RouteNames.questionnaire}`}
               component={QuestionaireIntro}
-            />
+            /> */}
+            <Route path={`/${RouteNames.questionnaire}/:id`} component={QA} />
             <Route
-              path={`/${RouteNames.questionnaire}/:id`}
-              component={Questions}
+              path={`/${RouteNames.questionnaire}`}
+              component={QuestionsIntro}
             />
             <PrivateRoute path='/profile' component={Profile} />
             <PrivateRoute path='/external-api' component={ExternalApi} />
+            <Route component={Page404} />
           </Switch>
         </main>
       </Router>
