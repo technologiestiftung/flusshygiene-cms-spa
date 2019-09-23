@@ -1,5 +1,8 @@
 import React, { useEffect } from 'react';
-import { useQuestions } from '../../contexts/questions';
+import {
+  useQuestionsState,
+  useQuestionsDispatch,
+} from '../../contexts/questions';
 
 import { useState } from 'react';
 import { Formik, Form, FieldArray, Field } from 'formik';
@@ -13,7 +16,7 @@ interface IAnswer {
   id: string;
   weight: number;
   answer?: string;
-  checked: boolean;
+  checked?: boolean;
 }
 
 export const Question: React.FC<{ qid: number }> = ({ qid }) => {
@@ -24,20 +27,21 @@ export const Question: React.FC<{ qid: number }> = ({ qid }) => {
   const [curAnswers, setCurAnswers] = useState<IAnswer[]>([]);
 
   const [aAddInfo, setAAddInfo] = useState('');
-  const { answers, questions, updateAnswer } = useQuestions();
+  const state = useQuestionsState();
+  const dispatch = useQuestionsDispatch();
   const [formReadyToRender, setFormReadyToRender] = useState(false);
   useEffect(() => {
-    if (questions === undefined) return;
-    if (questions.length - 1 < qid) return;
+    if (state.questions === undefined) return;
+    if (state.questions.length - 1 < qid) return;
 
-    setTitle(questions[qid].default[1][1]);
-    setQInfo(questions[qid].default[1][3]);
+    setTitle(state.questions[qid].default[1][1]);
+    setQInfo(state.questions[qid].default[1][3]);
     // console.log('qInfo', questions[qid].default[1][3]);
-    setQuestion(questions[qid].default[1][4]);
-    setQAddInfo(questions[qid].default[1][5]);
+    setQuestion(state.questions[qid].default[1][4]);
+    setQAddInfo(state.questions[qid].default[1][5]);
     // console.log('qAddInfo', questions[qid].default[1][5]);
 
-    const q = questions[qid].default;
+    const q = state.questions[qid].default;
     const localAnswers: IAnswer[] = [];
     // const a = answers[qid];
 
@@ -52,16 +56,16 @@ export const Question: React.FC<{ qid: number }> = ({ qid }) => {
         text: q[i][6],
         id: `${qid}-a${i - 1}-w${q[1][0]}`,
         weight: q[1][0],
-        checked: false,
+        // checked: undefined,
       };
       localAnswers.push(answer);
     }
     setCurAnswers(localAnswers);
     setAAddInfo('');
-    console.log(qid, answers[qid]);
+    console.log(qid, state.answers[qid]);
 
     setFormReadyToRender(true);
-  }, [questions, qid]);
+  }, [state.questions, qid]);
 
   // useEffect(() => {
   //   if (answers === undefined) return;
@@ -108,9 +112,16 @@ export const Question: React.FC<{ qid: number }> = ({ qid }) => {
           enableReinitialize={true}
           onSubmit={(values, { setSubmitting }) => {
             console.log('submitted', values);
-            updateAnswer(
-              qid,
-              values.answer === undefined ? '' : values.answer!,
+            dispatch(
+              {
+                type: 'SET_ANSWER',
+                payload: {
+                  index: qid,
+                  answer: values.answer === undefined ? '' : values.answer!,
+                },
+              },
+              // qid,
+              // values.answer === undefined ? '' : values.answer!,
             );
             setSubmitting(false);
           }}
@@ -119,7 +130,7 @@ export const Question: React.FC<{ qid: number }> = ({ qid }) => {
             return (
               <>
                 <pre>
-                  <code>{JSON.stringify(answers, null, 2)}</code>
+                  <code>{JSON.stringify(state.answers, null, 2)}</code>
                 </pre>
                 <Form>
                   <Container>
@@ -130,7 +141,7 @@ export const Question: React.FC<{ qid: number }> = ({ qid }) => {
                       }}
                     >
                       <Pagination
-                        pages={questions.length - 1}
+                        pages={state.questions.length - 1}
                         currentPage={qid}
                         isRounded={false}
                         isSmall={true}
