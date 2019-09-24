@@ -5,6 +5,7 @@ const filenames = [
   'Frage-2.3.1.-gew4.json',
   'Frage-2.4.1.-gew4.json',
   'Frage-3.1.1.-gew1.json',
+  'Frage-3.2.1.-gew0.json',
   'Frage-4.1.1.-gew3.json',
   'Frage-4.2.1.-gew3.json',
   'Frage-4.3.1.-gew3.json',
