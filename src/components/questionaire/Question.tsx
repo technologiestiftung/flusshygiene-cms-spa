@@ -1,8 +1,5 @@
 import React, { useEffect } from 'react';
-import {
-  useQuestionsState,
-  useQuestionsDispatch,
-} from '../../contexts/questions';
+import { useQuestions } from '../../contexts/questionaire';
 
 import { useState } from 'react';
 import { Formik, Form, FieldArray, Field } from 'formik';
@@ -27,8 +24,9 @@ export const Question: React.FC<{ qid: number }> = ({ qid }) => {
   const [curAnswers, setCurAnswers] = useState<IAnswer[]>([]);
 
   const [aAddInfo, setAAddInfo] = useState('');
-  const state = useQuestionsState();
-  const dispatch = useQuestionsDispatch();
+  // const state = useQuestionsState();
+  // const dispatch = useQuestionsDispatch();
+  const [state, dispatch] = useQuestions();
   const [formReadyToRender, setFormReadyToRender] = useState(false);
   useEffect(() => {
     if (state.questions === undefined) return;

@@ -1,7 +1,7 @@
 import React from 'react';
 import NavBar from './components/Navbar';
 import Home from './components/Home';
-import { useAuth0 } from './react-auth0-wrapper';
+import { useAuth0 } from './lib/auth/react-auth0-wrapper';
 import { Router, Route, Switch } from 'react-router-dom';
 import Profile from './components/Profile';
 import PrivateRoute from './components/PrivateRoute';
@@ -10,8 +10,8 @@ import Spot from './components/Spot';
 import Info from './components/Info';
 import { RouteNames } from './lib/common/enums';
 import history from './lib/history';
-import { QuestionsIntro } from './components/QuestionsIntro';
-import { QA } from './components/questionaire/QA';
+import { QuestionsIntro } from './components/questionaire/QuestionsIntro';
+import { QA } from './components/questionaire/QA-entrypoint';
 import { Page404 } from './components/Page404';
 
 const App: React.FC = () => {

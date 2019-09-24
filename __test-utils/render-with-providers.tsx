@@ -5,7 +5,7 @@ import { Router } from 'react-router-dom';
 
 import { render as rtlRender } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
-import { Auth0Provider } from '../src/react-auth0-wrapper';
+import { Auth0Provider } from '../src/lib/auth/react-auth0-wrapper';
 import { onRedirectCallback } from '../src/lib/auth/on-redirect-callback';
 import { createStore } from 'redux';
 import { reducer } from './empty-reducer';

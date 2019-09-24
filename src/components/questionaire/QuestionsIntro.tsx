@@ -1,5 +1,5 @@
 import React from 'react';
-import { QIntro } from './questionaire/QIntro';
+import { QIntro } from './QIntro';
 
 export const QuestionsIntro: React.FC = () => {
   return (

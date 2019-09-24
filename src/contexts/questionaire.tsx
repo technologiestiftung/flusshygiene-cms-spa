@@ -50,7 +50,7 @@ const answersReducer = (state: IQuestionsState, action: IAction) => {
       throw new Error(`Unhandled action type: ${action.type}`);
   }
 };
-export const QuestionsProvider = ({ children }: QuestionsProviderProps) => {
+const QuestionsProvider = ({ children }: QuestionsProviderProps) => {
   const [state, dispatch] = useReducer(answersReducer, {
     questions,
     answers,
@@ -65,7 +65,7 @@ export const QuestionsProvider = ({ children }: QuestionsProviderProps) => {
   );
 };
 
-export const useQuestionsState = () => {
+const useQuestionsState = () => {
   const stateContext = useContext(QuestionsStateContext);
   if (stateContext === undefined) {
     throw new Error(
@@ -76,7 +76,7 @@ export const useQuestionsState = () => {
   return stateContext;
 };
 
-export const useQuestionsDispatch = () => {
+const useQuestionsDispatch = () => {
   const dispatchContext = useContext(QuestionsDispatchContext);
   if (dispatchContext === undefined) {
     throw new Error(
@@ -85,3 +85,9 @@ export const useQuestionsDispatch = () => {
   }
   return dispatchContext;
 };
+
+const useQuestions: () => [IQuestionsState, Dispatch] = () => {
+  return [useQuestionsState(), useQuestionsDispatch()];
+};
+
+export { useQuestions, QuestionsProvider };
