@@ -28,10 +28,11 @@ export const Question: React.FC<{ qid: number }> = ({ qid }) => {
   // const dispatch = useQuestionsDispatch();
   const [state, dispatch] = useQuestions();
   const [formReadyToRender, setFormReadyToRender] = useState(false);
+  const [answersIds, setAnswersIds] = useState<string[]>([]);
   useEffect(() => {
     if (state.questions === undefined) return;
     if (state.questions.length - 1 < qid) return;
-
+    console.log('render');
     setTitle(state.questions[qid].default[1][1]);
     setQInfo(state.questions[qid].default[1][3]);
     // console.log('qInfo', questions[qid].default[1][3]);
@@ -48,6 +49,9 @@ export const Question: React.FC<{ qid: number }> = ({ qid }) => {
       // if (data[i][6] === null) {
       //   break;
       // }
+      if (q[i][6] === null) {
+        continue;
+      }
       const answer: IAnswer = {
         additionalText: q[i][7],
         colorText: q[i][9],
@@ -56,57 +60,30 @@ export const Question: React.FC<{ qid: number }> = ({ qid }) => {
         weight: q[1][0],
         // checked: undefined,
       };
+      if (answer.id === state.answers[qid]) {
+        console.log('match for', answer.id, '===', state.answers[qid]);
+        // answer.checked = true;
+        setAnswersIds((_prevState) => {
+          return [state.answers[qid]];
+        });
+      }
       localAnswers.push(answer);
     }
     setCurAnswers(localAnswers);
     setAAddInfo('');
-    console.log(qid, state.answers[qid]);
+    console.log('qid: answer in state', qid, state.answers[qid]);
 
     setFormReadyToRender(true);
   }, [state.questions, qid]);
 
-  // useEffect(() => {
-  //   if (answers === undefined) return;
-  //   if (answers[qid] === undefined) return;
-
-  //   if (answers[qid] === null) {
-  //     setSelection(undefined);
-  //   } else {
-  //     const existingSelection = answers[qid].split('-')[1].substring(1);
-  //     console.log(existingSelection);
-  //     const num = parseInt(existingSelection, 10);
-  //     if (isNaN(num) === true) {
-  //       throw new Error('could not parse selection');
-  //     } else {
-  //       setSelection(num);
-  //     }
-  //   }
-  // }, [answers, qid]);
-  // useEffect(() => {
-  //   if (answers === undefined) return;
-  //   if (answers.length - 1 < qid) return;
-  //   if (answers[qid] === null) return;
-  //   if (answers[qid] !== undefined) {
-  //     const split = answers[qid].split('-');
-  //     const aId = split[0];
-  //     if (aId !== qid) {
-  //       // setIntSelection(undefined);
-  //       return;
-  //     }
-  //     const selectionId = split[1];
-  //     const selectionWeight = split[2];
-  //     const selection = selectionId.substring(1);
-  //     setIntSelection((_prev) => {
-  //       const res = parseInt(selection, 10);
-  //       return isNaN(res) ? undefined : res;
-  //     });
-  //   }
-  // }, [answers, qid]);
   return (
     <>
       {formReadyToRender === true && (
         <Formik
-          initialValues={{ answers: curAnswers, answer: undefined }}
+          initialValues={{
+            answersIds,
+            answer: undefined,
+          }}
           enableReinitialize={true}
           onSubmit={(values, { setSubmitting }) => {
             console.log('submitted', values);
@@ -115,7 +92,10 @@ export const Question: React.FC<{ qid: number }> = ({ qid }) => {
                 type: 'SET_ANSWER',
                 payload: {
                   index: qid,
-                  answer: values.answer === undefined ? '' : values.answer!,
+                  answer:
+                    values.answersIds[0] === undefined
+                      ? ''
+                      : values.answersIds[0],
                 },
               },
               // qid,
@@ -184,31 +164,35 @@ export const Question: React.FC<{ qid: number }> = ({ qid }) => {
                       <p>{aAddInfo}</p>
                       <div className='control'>
                         <FieldArray
-                          name='answers'
-                          render={(_helpers) => {
+                          name='answersIds'
+                          render={(arrayHelpers) => {
+                            console.log(arrayHelpers);
                             return (
                               <>
-                                {values.answers.map((ele, i) => {
+                                {curAnswers.map((ele, i) => {
                                   // console.log(ele);
-                                  if (ele === undefined) return null;
-                                  if (ele.text === null) return null;
-
+                                  // if (ele === undefined) return null;
+                                  // if (ele.text === null) return null;
+                                  console.log(ele.id);
                                   return (
                                     <div key={i} className='field'>
                                       <Field
                                         type='radio'
                                         id={`answer--${i}`}
-                                        name={'answer'}
+                                        name={`answers`}
                                         className={'answer'}
                                         onChange={(
                                           e: React.ChangeEvent<any>,
                                         ) => {
                                           handleChange(e);
+                                          arrayHelpers.replace(0, ele.id);
                                           setAAddInfo(ele.additionalText);
                                         }}
                                         required
                                         value={ele.id}
-                                        checked={ele.checked}
+                                        checked={values.answersIds.includes(
+                                          ele.id,
+                                        )}
                                       />
                                       <label
                                         htmlFor={`answer--${i}`}
