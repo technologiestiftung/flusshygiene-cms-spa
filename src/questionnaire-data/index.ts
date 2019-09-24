@@ -28,7 +28,9 @@ export const getQuestions = async () => {
   try {
     const data: any[] = [];
     for (const fn of filenames) {
-      const file = await import(`./${fn}`);
+      const file = await import(`./${fn}`).catch((err) => {
+        console.error(err);
+      });
       data.push(file);
     }
     // console.log(data);
