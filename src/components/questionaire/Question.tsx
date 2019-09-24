@@ -1,80 +1,76 @@
 import React, { useEffect } from 'react';
 import { useQuestions } from '../../contexts/questionaire';
-
 import { useState } from 'react';
 import { Formik, Form, FieldArray, Field } from 'formik';
 import { Container } from '../Container';
 import { QToolBar } from './QToolBar';
 import { Pagination } from './Pagination';
-interface IAnswer {
-  text: string;
-  colorText: 'grün' | 'gelb' | 'orange' | 'türkis' | 'rot';
-  additionalText: string;
-  id: string;
-  weight: number;
-  answer?: string;
-  checked?: boolean;
-}
+import history from '../../lib/history';
+import { RouteNames } from '../../lib/common/enums';
+import { IAnswer } from '../../lib/common/interfaces';
+import { colorNameToIcon, questionTypeToIcon } from '../fontawesome-icons';
 
+/**
+ * Component holds all the question logic
+ *
+ */
 export const Question: React.FC<{ qid: number }> = ({ qid }) => {
   const [title, setTitle] = useState('');
   const [qInfo, setQInfo] = useState('');
   const [question, setQuestion] = useState('');
   const [qAddInfo, setQAddInfo] = useState('');
   const [curAnswers, setCurAnswers] = useState<IAnswer[]>([]);
-
+  // const [questionType, setQuestionType] = useState<string>();
   const [aAddInfo, setAAddInfo] = useState('');
-  // const state = useQuestionsState();
-  // const dispatch = useQuestionsDispatch();
+
   const [state, dispatch] = useQuestions();
   const [formReadyToRender, setFormReadyToRender] = useState(false);
   const [answersIds, setAnswersIds] = useState<string[]>([]);
+
   useEffect(() => {
     if (state.questions === undefined) return;
     if (state.questions.length - 1 < qid) return;
-    console.log('render');
     setTitle(state.questions[qid].default[1][1]);
     setQInfo(state.questions[qid].default[1][3]);
-    // console.log('qInfo', questions[qid].default[1][3]);
     setQuestion(state.questions[qid].default[1][4]);
     setQAddInfo(state.questions[qid].default[1][5]);
-    // console.log('qAddInfo', questions[qid].default[1][5]);
 
     const q = state.questions[qid].default;
+    // console.log(q);
     const localAnswers: IAnswer[] = [];
-    // const a = answers[qid];
 
     for (let i = 1; i < q.length; i++) {
-      // console.log(data[i][6]);
-      // if (data[i][6] === null) {
-      //   break;
-      // }
       if (q[i][6] === null) {
         continue;
       }
+      // if (q[i][11] !== null) {
+      //   setQuestionType(q[i][11].toLowerCase());
+      //   console.log(q[i][11]);
+      // }
       const answer: IAnswer = {
         additionalText: q[i][7],
         colorText: q[i][9],
         text: q[i][6],
-        id: `${qid}-a${i - 1}-w${q[1][0]}`,
+        id: `${qid}-a${i - 1}-w${q[1][0]}-p${q[i][10]}`,
         weight: q[1][0],
-        // checked: undefined,
+        possibility: q[i][10],
+        qType: q[i][11] !== null ? q[i][11].toLowerCase() : undefined,
       };
       if (answer.id === state.answers[qid]) {
-        console.log('match for', answer.id, '===', state.answers[qid]);
-        // answer.checked = true;
         setAnswersIds((_prevState) => {
           return [state.answers[qid]];
+        });
+      } else {
+        setAnswersIds((_) => {
+          return [];
         });
       }
       localAnswers.push(answer);
     }
     setCurAnswers(localAnswers);
     setAAddInfo('');
-    console.log('qid: answer in state', qid, state.answers[qid]);
-
     setFormReadyToRender(true);
-  }, [state.questions, qid]);
+  }, [state.questions, qid, state.answers]);
 
   return (
     <>
@@ -87,35 +83,50 @@ export const Question: React.FC<{ qid: number }> = ({ qid }) => {
           enableReinitialize={true}
           onSubmit={(values, { setSubmitting }) => {
             console.log('submitted', values);
-            dispatch(
-              {
-                type: 'SET_ANSWER',
-                payload: {
-                  index: qid,
-                  answer:
-                    values.answersIds[0] === undefined
-                      ? ''
-                      : values.answersIds[0],
-                },
+            dispatch({
+              type: 'SET_ANSWER',
+              payload: {
+                index: qid,
+                answer:
+                  values.answersIds[0] === undefined
+                    ? null
+                    : values.answersIds[0],
               },
-              // qid,
-              // values.answer === undefined ? '' : values.answer!,
-            );
+            });
             setSubmitting(false);
           }}
         >
-          {({ values, isSubmitting, handleChange, isValid, submitForm }) => {
+          {({ values, isSubmitting, handleChange }) => {
+            const answerDispatch = () => {
+              if (values.answersIds.length > 0) {
+                const answerQid = values.answersIds[0].split('-')[0];
+                if (parseInt(answerQid, 10) === qid) {
+                  dispatch({
+                    type: 'SET_ANSWER',
+                    payload: {
+                      index: qid,
+                      answer:
+                        values.answersIds[0] === undefined
+                          ? null
+                          : values.answersIds[0],
+                    },
+                  });
+                }
+              }
+            };
             return (
               <>
-                <pre>
-                  <code>{JSON.stringify(state.answers, null, 2)}</code>
-                </pre>
                 <Form>
                   <Container>
                     <QToolBar
                       isSubmitting={isSubmitting}
-                      handleClick={(e: React.ChangeEvent<any>) => {
+                      handleInfoClick={(e: React.ChangeEvent<any>) => {
+                        // calls info button
                         console.log(e.currentTarget.id);
+                      }}
+                      handleReportClick={(e: React.ChangeEvent<any>) => {
+                        answerDispatch();
+                        history.push(`/${RouteNames.questionnaire}/report`);
                       }}
                     >
                       <Pagination
@@ -125,23 +136,11 @@ export const Question: React.FC<{ qid: number }> = ({ qid }) => {
                         isSmall={true}
                         isCentered={true}
                         onChange={(
-                          event: React.ChangeEvent<any>,
-                          page: number,
+                          _event: React.ChangeEvent<any>,
+                          _page: number,
                         ) => {
-                          console.log('Clicked button', event.currentTarget.id);
-                          console.log('page', page);
-
-                          switch (event.currentTarget.id) {
-                            case 'fwd':
-                              console.log('-->');
-                              break;
-                            case 'bwd':
-                              console.log('<--');
-                              break;
-                            default:
-                              console.log('default');
-                              break;
-                          }
+                          // console.log(values.answersIds);
+                          answerDispatch();
                         }}
                       ></Pagination>
                     </QToolBar>
@@ -161,19 +160,13 @@ export const Question: React.FC<{ qid: number }> = ({ qid }) => {
                     </div>
                     <div className='content'>
                       <p className='title'>Antworten:</p>
-                      <p>{aAddInfo}</p>
                       <div className='control'>
                         <FieldArray
                           name='answersIds'
                           render={(arrayHelpers) => {
-                            console.log(arrayHelpers);
                             return (
                               <>
                                 {curAnswers.map((ele, i) => {
-                                  // console.log(ele);
-                                  // if (ele === undefined) return null;
-                                  // if (ele.text === null) return null;
-                                  console.log(ele.id);
                                   return (
                                     <div key={i} className='field'>
                                       <Field
@@ -198,7 +191,21 @@ export const Question: React.FC<{ qid: number }> = ({ qid }) => {
                                         htmlFor={`answer--${i}`}
                                         className={'radio label__answer'}
                                       >
-                                        {ele.text} <em>{ele.colorText}</em>
+                                        {ele.text}{' '}
+                                        <span>
+                                          {values.answersIds.includes(
+                                            ele.id,
+                                          ) === true &&
+                                            colorNameToIcon(ele.colorText)}{' '}
+                                          {values.answersIds.includes(
+                                            ele.id,
+                                          ) === true &&
+                                            ele.qType !== undefined &&
+                                            questionTypeToIcon(
+                                              ele.qType,
+                                              ele.colorText,
+                                            )}
+                                        </span>
                                       </label>
                                     </div>
                                   );
@@ -209,6 +216,10 @@ export const Question: React.FC<{ qid: number }> = ({ qid }) => {
                         ></FieldArray>
                       </div>
                     </div>
+
+                    <div className='content'>
+                      <p>{aAddInfo}</p>
+                    </div>
                   </Container>
                 </Form>
               </>
@@ -216,13 +227,6 @@ export const Question: React.FC<{ qid: number }> = ({ qid }) => {
           }}
         </Formik>
       )}
-
-      {/* <pre>
-        <code>{JSON.stringify(curAnswers, null, 2)}</code>
-      </pre>
-      <pre>
-        <code>{JSON.stringify(questions[qid], null, 2)}</code>
-      </pre> */}
     </>
   );
 };

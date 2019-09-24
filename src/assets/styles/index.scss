@@ -144,6 +144,42 @@ $mapHeight: 400px;
   overflow: hidden;
 }
 
+// report
+
+.report__answer {
+  padding-bottom: 2em;
+  border-top: 1px dashed gray;
+}
+
+// questionnaire colornames
+
+.questionnaire__color {
+  &--green {
+    color: green;
+  }
+  &--yellow {
+    color: yellow;
+  }
+  &--orange {
+    color: orange;
+  }
+  &--turquoise {
+    color: turquoise;
+  }
+  &--red {
+    color: red;
+  }
+}
+// icons
+
+.icon__color {
+  &--red {
+    color: red;
+  }
+}
+
+// co
+
 // .spot__calib-notification--on-top {
 //   position: absolute;
 //   top: 1rem;

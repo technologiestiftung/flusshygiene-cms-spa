@@ -30,7 +30,7 @@ export const Page: React.FC<{
       id={cssId}
       aria-label={`Goto page ${index}`}
       aria-current={index === currentPage && 'page'}
-      // onClick={(event) => onChange(event, index)}
+      onClick={(event) => onChange(event, index)}
     >
       {index}
     </Link>
@@ -183,7 +183,7 @@ export const Pagination: React.FC<{
         // disabled={currentPage === 1}
         id={'bwd'}
         className={`pagination-previous nav ${prevClassName}`}
-        // onClick={(event) => onChange(event, currentPage - 1)}
+        onClick={(event) => onChange(event, currentPage - 1)}
       >
         <IconPrev></IconPrev>
         {/* Vorherige Frage */}
@@ -199,7 +199,7 @@ export const Pagination: React.FC<{
         id={'fwd'}
         // disabled={currentPage === pages}
         className={`pagination-next nav ${nextClassName}`}
-        // onClick={(event) => onChange(event, currentPage + 1)}
+        onClick={(event) => onChange(event, currentPage + 1)}
       >
         <IconNext></IconNext>
         {/* Nächste Frage */}

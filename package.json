@@ -135,7 +135,7 @@
   "proxy": "http://localhost:5004",
   "husky": {
     "hooks": {
-      "pre-commit": "nom run add:version && npm run lint-staged"
+      "pre-commit": "npm run add:version && npm run lint-staged"
     }
   },
   "config": {
