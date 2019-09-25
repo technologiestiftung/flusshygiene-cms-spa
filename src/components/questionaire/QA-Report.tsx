@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useQuestions } from '../../contexts/questionaire';
 import { Container } from '../Container';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { RouteNames } from '../../lib/common/enums';
 import {
   IconLink,
@@ -73,6 +73,7 @@ export const Report: React.FC = () => {
     for (const item of answers) {
       if (item === undefined) continue;
       if (item === null) continue;
+      if (typeof item !== 'string') continue;
 
       const split = item.split('-');
       const weight = parseInt(split[2].substring(1), 10);
@@ -89,80 +90,92 @@ export const Report: React.FC = () => {
     setProbability(res);
     return () => {};
   }, [state.answers]);
-  return (
-    <>
-      <Container columnClassName={'is-8'}>
-        <h1 className='title is-1'>Report</h1>
-        <h2 className='subtitle is-4'>der aktuellen Standortbewertung</h2>
-        <div className='content'>
-          {allAnswersGiven === false && (
-            <p>
-              <strong>Achtung es wurden nicht alle Fragen beantwortet!</strong>
-            </p>
-          )}
-          <p className={allAnswersGiven === false ? 'has-text-grey-light' : ''}>
-            Umsetzungswahrscheinlichkeit:{' '}
-            {isNaN(probability) === false && roundTo(probability, 2)}%
-          </p>
-        </div>
-        <div className='content'>
-          <ol>
-            {localQuestions.map((ele, i) => {
-              return (
-                <li key={i}>
-                  <div className='content report__answer'>
-                    <p className=''>
-                      <strong>
-                        {ele}{' '}
-                        <Link
-                          to={`/${RouteNames.questionnaire}/${i + 1}`}
-                          title={'Zurück zur Frage'}
-                        >
-                          <IconLink />
-                        </Link>
-                      </strong>
-                    </p>
 
-                    {(() => {
-                      if (state.answers[i + 1] === undefined) {
+  if (state.questions.length === 0) {
+    return <Redirect to={`/${RouteNames.questionnaire}`} />;
+  } else {
+    return (
+      <>
+        <Container columnClassName={'is-8'}>
+          <h1 className='title is-1'>Report</h1>
+          <h2 className='subtitle is-4'>der aktuellen Standortbewertung</h2>
+          <div className='content'>
+            {allAnswersGiven === false && (
+              <p>
+                <strong>
+                  Achtung es wurden nicht alle Fragen beantwortet!
+                </strong>
+              </p>
+            )}
+            <p
+              className={allAnswersGiven === false ? 'has-text-grey-light' : ''}
+            >
+              Umsetzungswahrscheinlichkeit:{' '}
+              {isNaN(probability) === false && roundTo(probability, 2)}%
+            </p>
+          </div>
+          <div className='content'>
+            <ol>
+              {localQuestions.map((ele, i) => {
+                return (
+                  <li key={i}>
+                    <div className='content report__answer'>
+                      <p className=''>
+                        <strong>
+                          {ele}{' '}
+                          <Link
+                            to={`/${RouteNames.questionnaire}/${i + 1}`}
+                            title={'Zurück zur Frage'}
+                          >
+                            <IconLink />
+                          </Link>
+                        </strong>
+                      </p>
+
+                      {(() => {
+                        if (
+                          state.answers[i + 1] === undefined ||
+                          state.answers[i + 1] === null
+                        ) {
+                          return (
+                            <p>
+                              <em>Noch nicht beantwortet!</em>
+                            </p>
+                          );
+                        }
+                        const split = state.answers[i + 1].split('-');
+                        // const id = parseInt(split[0], 10);
+                        const aId = parseInt(split[1].substring(1), 10);
+                        // if (id === i + 1) {
+                        //   console.log(id, aId);
+                        //   console.log(localAnswers[i][aId]);
+                        // }
+                        // console.log(i, state.answers[i + 1]);
                         return (
                           <p>
-                            <em>Noch nicht beantwortet!</em>
+                            {localAnswers[i][aId].text}{' '}
+                            {colorNameToIcon(localAnswers[i][aId].colorText)}{' '}
+                            {localAnswers[i][aId].qType !== undefined &&
+                              questionTypeToIcon(
+                                localAnswers[i][aId].qType!,
+                                localAnswers[i][aId].colorText,
+                              )}
                           </p>
                         );
-                      }
-                      const split = state.answers[i + 1].split('-');
-                      // const id = parseInt(split[0], 10);
-                      const aId = parseInt(split[1].substring(1), 10);
-                      // if (id === i + 1) {
-                      //   console.log(id, aId);
-                      //   console.log(localAnswers[i][aId]);
-                      // }
-                      // console.log(i, state.answers[i + 1]);
-                      return (
-                        <p>
-                          {localAnswers[i][aId].text}{' '}
-                          {colorNameToIcon(localAnswers[i][aId].colorText)}{' '}
-                          {localAnswers[i][aId].qType !== undefined &&
-                            questionTypeToIcon(
-                              localAnswers[i][aId].qType!,
-                              localAnswers[i][aId].colorText,
-                            )}
-                        </p>
-                      );
-                    })()}
+                      })()}
 
-                    {/* <p>{JSON.stringify(localAnswers[i])}</p> */}
-                  </div>
-                </li>
-              );
-            })}
-          </ol>
-        </div>
-        {/* <pre>
+                      {/* <p>{JSON.stringify(localAnswers[i])}</p> */}
+                    </div>
+                  </li>
+                );
+              })}
+            </ol>
+          </div>
+          {/* <pre>
           <code>{JSON.stringify(state.answers, null, 2)}</code>
         </pre> */}
-      </Container>
-    </>
-  );
+        </Container>
+      </>
+    );
+  }
 };

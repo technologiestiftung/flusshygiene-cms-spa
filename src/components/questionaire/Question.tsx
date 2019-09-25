@@ -9,6 +9,7 @@ import history from '../../lib/history';
 import { RouteNames } from '../../lib/common/enums';
 import { IAnswer } from '../../lib/common/interfaces';
 import { colorNameToIcon, questionTypeToIcon } from '../fontawesome-icons';
+import { createLinks } from '../../lib/utils/questionnaire-additional-texts-filter';
 
 /**
  * Component holds all the question logic
@@ -33,7 +34,7 @@ export const Question: React.FC<{ qid: number }> = ({ qid }) => {
     setTitle(state.questions[qid].default[1][1]);
     setQInfo(state.questions[qid].default[1][3]);
     setQuestion(state.questions[qid].default[1][4]);
-    setQAddInfo(state.questions[qid].default[1][5]);
+    setQAddInfo(createLinks(state.questions[qid].default[1][5]));
 
     const q = state.questions[qid].default;
     // console.log(q);
@@ -48,7 +49,7 @@ export const Question: React.FC<{ qid: number }> = ({ qid }) => {
       //   console.log(q[i][11]);
       // }
       const answer: IAnswer = {
-        additionalText: q[i][7],
+        additionalText: createLinks(q[i][7]),
         colorText: q[i][9],
         text: q[i][6],
         id: `${qid}-a${i - 1}-w${q[1][0]}-p${q[i][10]}`,
@@ -87,6 +88,7 @@ export const Question: React.FC<{ qid: number }> = ({ qid }) => {
       // console.log(item);
       if (state.answers.includes(item.id) === true) {
         setAnswersIds([item.id]);
+        setAAddInfo(item.additionalText);
       }
     }
     return () => {};
@@ -151,6 +153,11 @@ export const Question: React.FC<{ qid: number }> = ({ qid }) => {
                         answerDispatch();
                         history.push(`/${RouteNames.questionnaire}/report`);
                       }}
+                      handleResetClick={(e: React.ChangeEvent<any>) => {
+                        dispatch({ type: 'REMOVE_ANSWERS' });
+                        setAnswersIds([]);
+                        resetForm();
+                      }}
                     >
                       <Pagination
                         pages={state.questions.length - 1}
@@ -176,10 +183,10 @@ export const Question: React.FC<{ qid: number }> = ({ qid }) => {
                     <div className='content'>
                       <p className='title'>Frage:</p>
 
-                      <p>{question}</p>
                       <p>
-                        <em>{qAddInfo}</em>
+                        <strong>{question}</strong>
                       </p>
+                      <p dangerouslySetInnerHTML={{ __html: qAddInfo }} />
                     </div>
                     <div className='content'>
                       <p className='title'>Antworten:</p>
@@ -241,7 +248,7 @@ export const Question: React.FC<{ qid: number }> = ({ qid }) => {
                     </div>
 
                     <div className='content'>
-                      <p>{aAddInfo}</p>
+                      <p dangerouslySetInnerHTML={{ __html: aAddInfo }} />
                     </div>
                   </Container>
                 </Form>
