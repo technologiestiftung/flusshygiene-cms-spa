@@ -56,15 +56,24 @@ export const Question: React.FC<{ qid: number }> = ({ qid }) => {
         possibility: q[i][10],
         qType: q[i][11] !== null ? q[i][11].toLowerCase() : undefined,
       };
-      if (answer.id === state.answers[qid]) {
-        setAnswersIds((_prevState) => {
-          return [state.answers[qid]];
-        });
-      } else {
-        setAnswersIds((_) => {
-          return [];
-        });
-      }
+      // console.log('ids of answers for this view', answer.id);
+      // console.log('all current answers in state', state.answers);
+      // console.log(answersIds);
+      // console.log('qid', qid);
+      // if (state.answers.includes(answer.id)) {
+      //   console.log('got a match from the state');
+      //   console.log(answer.id, state.answers[qid]);
+      //   // setAnswersIds([answer.id]);
+      //   setAnswersIds((prevState) => {
+      //     const nextState: string[] = [state.answers[qid]];
+      //     console.log('setting new answer id', [state.answers[qid]]);
+      //     return nextState;
+      //   });
+      // } else {
+      //   setAnswersIds((_) => {
+      //     return [];
+      //   });
+      // }
       localAnswers.push(answer);
     }
     setCurAnswers(localAnswers);
@@ -72,16 +81,26 @@ export const Question: React.FC<{ qid: number }> = ({ qid }) => {
     setFormReadyToRender(true);
   }, [state.questions, qid, state.answers]);
 
+  useEffect(() => {
+    if (curAnswers.length === 0) return;
+    for (const item of curAnswers) {
+      // console.log(item);
+      if (state.answers.includes(item.id) === true) {
+        setAnswersIds([item.id]);
+      }
+    }
+    return () => {};
+  }, [state.answers, curAnswers]);
   return (
     <>
       {formReadyToRender === true && (
         <Formik
           initialValues={{
-            answersIds,
+            answersIds: answersIds,
             answer: undefined,
           }}
           enableReinitialize={true}
-          onSubmit={(values, { setSubmitting }) => {
+          onSubmit={(values, { setSubmitting, resetForm }) => {
             console.log('submitted', values);
             dispatch({
               type: 'SET_ANSWER',
@@ -94,9 +113,12 @@ export const Question: React.FC<{ qid: number }> = ({ qid }) => {
               },
             });
             setSubmitting(false);
+            resetForm();
           }}
         >
-          {({ values, isSubmitting, handleChange }) => {
+          {({ values, isSubmitting, handleChange, resetForm }) => {
+            // const newState:Partial<FormikState<{ answersIds: string[]; answer: undefined; }>> = {answersIds:[...answersIds], answers: undefined}
+            // resetForm();
             const answerDispatch = () => {
               if (values.answersIds.length > 0) {
                 const answerQid = values.answersIds[0].split('-')[0];
@@ -111,6 +133,7 @@ export const Question: React.FC<{ qid: number }> = ({ qid }) => {
                           : values.answersIds[0],
                     },
                   });
+                  resetForm();
                 }
               }
             };

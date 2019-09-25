@@ -52,7 +52,7 @@ export const Report: React.FC = () => {
     setLocalAnswers((_) => {
       return tmpAnswers;
     });
-  }, [state.questions]);
+  }, [state.questions, setLocalQuestions]);
 
   useEffect(() => {
     if (state.answers === undefined) return;
@@ -60,7 +60,7 @@ export const Report: React.FC = () => {
 
     const answers = state.answers.filter((ele) => ele !== undefined);
     // console.log('A', state.answers.length, 'Q', state.questions.length);
-    // console.log(answers);
+    console.log(answers);
     const copyAnwers = [...state.answers];
     copyAnwers.shift();
     if (copyAnwers.includes(undefined) === false) {
@@ -72,6 +72,8 @@ export const Report: React.FC = () => {
     const allWeights: number[] = [];
     for (const item of answers) {
       if (item === undefined) continue;
+      if (item === null) continue;
+
       const split = item.split('-');
       const weight = parseInt(split[2].substring(1), 10);
       const possibility = parseFloat(split[3].substring(1));
