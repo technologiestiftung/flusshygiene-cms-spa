@@ -10,7 +10,7 @@
     "@fortawesome/fontawesome-svg-core": "^1.2.22",
     "@fortawesome/free-solid-svg-icons": "^5.10.2",
     "@fortawesome/react-fontawesome": "^0.1.4",
-    "@nebula.gl/layers": "^0.15.0-alpha.7",
+    "@nebula.gl/layers": "^0.16.0",
     "@storybook/addon-info": "^5.1.11",
     "@testing-library/react": "^9.1.3",
     "@turf/difference": "^6.0.2",
