@@ -25,6 +25,8 @@ const messageCalibratePredict = {
     'Ihre Kalibrierung wurde gestartet. Abhängig von der Menge an Messwerten kann dies dauern. Bitte kommen Sie in einigen Minuten zurück.',
   predict:
     'Ihre Vorhersagegenerierung wurde gestartet. Abhängig von der Menge an Messwerten kann dies dauern. Bitte kommen Sie in einigen Minuten zurück.',
+  model:
+    'Ihre Modelierung wurde gestartet. Dies kann etwas dauern. Bitte kommen Sie in einigen Minuten zurück.',
 };
 type RouteProps = RouteComponentProps<{ id: string }>;
 
@@ -37,6 +39,20 @@ const Spot: React.FC<RouteProps> = ({ match }) => {
   const handleCalibratePredictClick = (event: React.ChangeEvent<any>) => {
     // console.log('Start calibration');
     console.log(event.currentTarget.id);
+    switch (event.currentTarget.id) {
+      case 'predict':
+        console.log('clicked predict');
+        break;
+      case 'model':
+        console.log('clicked model');
+        break;
+      case 'calibrate':
+        console.log('clicked calibrate');
+        break;
+      default:
+        throw new Error('Target for button not defined');
+        break;
+    }
     setCalibratePredictSelector(event.currentTarget.id);
     setShowNotification((prevState) => !prevState);
   };
@@ -45,7 +61,7 @@ const Spot: React.FC<RouteProps> = ({ match }) => {
   const [editMode, setEditMode] = useState(false);
   const [token, setToken] = useState<string>();
   const [calibratePredictSelector, setCalibratePredictSelector] = useState<
-    'calibrate' | 'predict' | undefined
+    'calibrate' | 'predict' | 'model' | undefined
   >(undefined);
   const [showNotification, setShowNotification] = useState(false);
   const spot = useSelector((state: RootState) => state.detailSpot.spot);
@@ -158,14 +174,21 @@ const Spot: React.FC<RouteProps> = ({ match }) => {
                 onClick={handleCalibratePredictClick}
                 id='calibrate'
               >
-                Kalibrierung Starten
+                Regen/Messwert Kalibrierung Starten
+              </button>
+              <button
+                className='button is-small'
+                onClick={handleCalibratePredictClick}
+                id='model'
+              >
+                VorhersageModell berechnen
               </button>
               <button
                 className='button is-small'
                 onClick={handleCalibratePredictClick}
                 id='predict'
               >
-                Vorhersage berechnen
+                Heutige Vorhersage berechnen
               </button>
             </div>
           </Container>
