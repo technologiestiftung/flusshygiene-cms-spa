@@ -1,46 +1,12 @@
 import React, { createContext, useContext, useReducer } from 'react';
+import {
+  IOcpuAction,
+  IOcpuState,
+  IOcpuStartAction,
+  IOcpuFinishAction,
+  IOcpuFailAction,
+} from '../lib/common/interfaces';
 
-type OcpuDispatchTypes =
-  | 'START_OCPU_REQUEST'
-  | 'FINISH_OCPU_REQUEST'
-  | 'FAIL_OCPU_REQUEST';
-
-interface IOcpuAction {
-  type: OcpuDispatchTypes;
-  payload?: {
-    [key: string]: any;
-  };
-}
-interface IOcpuFetchAction extends IOcpuAction {
-  payload: {
-    url: string;
-    config: {
-      method: string;
-      headers: { [key: string]: any };
-      body: string;
-    };
-  };
-}
-
-interface IOcpuFinishAction extends IOcpuAction {
-  payload: {
-    response: Response;
-  };
-}
-
-interface IOcpuFailAction extends IOcpuAction {
-  payload: {
-    error: {
-      [key: string]: any;
-    };
-  };
-}
-interface IOcpuState {
-  [key: string]: any;
-  sessionId: string;
-  responses: any[];
-  errors: any[];
-}
 type Dispatch = (action: IOcpuAction) => void;
 type OcpuProviderProps = { children: React.ReactNode };
 
@@ -50,16 +16,22 @@ const OcpuDispatchContext = createContext<Dispatch | undefined>(undefined);
 
 const ocpuReducer: (
   state: IOcpuState,
-  action: IOcpuAction | IOcpuFetchAction | IOcpuFinishAction | IOcpuFailAction,
+  action: IOcpuAction | IOcpuStartAction | IOcpuFinishAction | IOcpuFailAction,
 ) => IOcpuState = (state, action) => {
   switch (action.type) {
     case 'START_OCPU_REQUEST': {
+      console.log('request started');
+
       return state;
     }
     case 'FINISH_OCPU_REQUEST': {
+      console.log('request finished');
+
       return state;
     }
     case 'FAIL_OCPU_REQUEST': {
+      console.log('request failed');
+
       return state;
     }
     default: {
@@ -97,20 +69,31 @@ const useOcpuState = () => {
 const postOcpu = async (dispatch: Dispatch, action: IOcpuAction) => {
   dispatch(action);
   let response: Response;
-  const fetchAction = action as IOcpuFetchAction;
+  const fetchAction = action as IOcpuStartAction;
   try {
+    console.log('ocpu action triggered');
     response = await fetch(fetchAction.payload.url, fetchAction.payload.config);
+    console.log(response);
     if (response.ok === true) {
-      const json = await response.json();
+      let json: any;
+      try {
+        json = await response.json();
+      } catch (err) {
+        console.error('Error parsing response from fetch call to json', err);
+        throw err;
+      }
+      console.log('Response json from postOcpu', json);
       const finishPayload: IOcpuFinishAction = {
         type: 'FINISH_OCPU_REQUEST',
         payload: { response: json },
       };
       dispatch(finishPayload);
     } else {
+      console.warn('fetch response not ok');
       throw new Error('Network fetch response not ok');
     }
   } catch (error) {
+    console.error('Error while making fetch call', error);
     const failPayload: IOcpuFailAction = {
       type: 'FAIL_OCPU_REQUEST',
       payload: { error: response! },

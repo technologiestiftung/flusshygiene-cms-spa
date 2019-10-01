@@ -93,12 +93,12 @@ export interface ICSVValidationErrorRes {
 }
 
 export interface IBathingspotMeasurement {
-  date: Date;
-  conc_ec: number;
+  date?: Date;
+  conc_ec?: number;
   conc_ec_txt?: string;
   oldId?: number;
   detailId?: number;
-  conc_ie: number;
+  conc_ie?: number;
   conc_ie_txt?: string;
   temp?: number;
   algen?: boolean;
@@ -187,6 +187,52 @@ export interface IAnswer {
   possibility?: number;
   qType?: QType;
   reportAddInfo: string;
+}
+
+// ocpe context interfaces
+
+export type OcpuDispatchTypes =
+  | 'START_OCPU_REQUEST'
+  | 'FINISH_OCPU_REQUEST'
+  | 'FAIL_OCPU_REQUEST';
+
+export interface IOcpuAction {
+  type: OcpuDispatchTypes;
+  payload?: {
+    [key: string]: any;
+  };
+}
+export interface IOcpuStartAction extends IOcpuAction {
+  payload: {
+    url: string;
+    config: RequestInit;
+    //  {
+    //   method: string;
+    //   headers: { [key: string]: any };
+    //   body: string;
+    // };
+  };
+}
+
+export interface IOcpuFinishAction extends IOcpuAction {
+  payload: {
+    response: Response;
+  };
+}
+
+export interface IOcpuFailAction extends IOcpuAction {
+  payload: {
+    error: {
+      [key: string]: any;
+    };
+  };
+}
+
+export interface IOcpuState {
+  [key: string]: any;
+  sessionId: string;
+  responses: any[];
+  errors: any[];
 }
 
 // ╔╦╗┬ ┬┌─┐┌─┐┌─┐

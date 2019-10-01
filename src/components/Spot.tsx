@@ -1,9 +1,13 @@
 // import { DEFAULT_SPOT_ID } from '../lib/common/constants';
 import { APIMountPoints, ApiResources, RouteNames } from '../lib/common/enums';
 import { fetchSingleSpot } from '../lib/state/reducers/actions/fetch-get-single-spot';
-import { IFetchSpotOptions } from '../lib/common/interfaces';
+import {
+  IFetchSpotOptions,
+  IOcpuStartAction,
+  IObject,
+} from '../lib/common/interfaces';
 import { Link } from 'react-router-dom';
-import { Measurement } from './spot/Spot-Measurement';
+import { Measurement, MeasurementTableRow } from './spot/Spot-Measurement';
 import { RootState } from '../lib/state/reducers/root-reducer';
 import { RouteComponentProps } from 'react-router';
 import { SpotBodyAddonTagGroup } from './spot/Spot-AddonTag-Group';
@@ -20,6 +24,7 @@ import SpotsMap from './spot/Spot-Map';
 import { useAuth0 } from '../lib/auth/react-auth0-wrapper';
 import { REACT_APP_API_HOST } from '../lib/config';
 import { Container } from './Container';
+import { useOcpu, postOcpu } from '../contexts/opencpu';
 const messageCalibratePredict = {
   calibrate:
     'Ihre Kalibrierung wurde gestartet. Abhängig von der Menge an Messwerten kann dies dauern. Bitte kommen Sie in einigen Minuten zurück.',
@@ -32,6 +37,7 @@ type RouteProps = RouteComponentProps<{ id: string }>;
 
 const Spot: React.FC<RouteProps> = ({ match }) => {
   const { user, isAuthenticated, getTokenSilently } = useAuth0();
+  const [ocpuState, ocpuDispatch] = useOcpu();
 
   const handleEditModeClick = () => {
     setEditMode(!editMode);
@@ -39,19 +45,77 @@ const Spot: React.FC<RouteProps> = ({ match }) => {
   const handleCalibratePredictClick = (event: React.ChangeEvent<any>) => {
     // console.log('Start calibration');
     console.log(event.currentTarget.id);
+    console.log(ocpuState);
+
     switch (event.currentTarget.id) {
       case 'predict':
-        console.log('clicked predict');
+        {
+          const action: IOcpuStartAction = {
+            type: 'START_OCPU_REQUEST',
+            payload: {
+              url: `/middlelayer/predict`,
+              config: {
+                method: 'POST',
+                headers: {},
+                credentials: 'include',
+                body: JSON.stringify({
+                  spot_id: spot.id,
+                  user_id: user.pgapiData.id,
+                }),
+              },
+            },
+          };
+          postOcpu(ocpuDispatch, action);
+          console.log('clicked predict');
+        }
         break;
       case 'model':
-        console.log('clicked model');
+        {
+          const action: IOcpuStartAction = {
+            type: 'START_OCPU_REQUEST',
+            payload: {
+              url: `/middlelayer/model`,
+              config: {
+                method: 'POST',
+                headers: {},
+                credentials: 'include',
+                body: JSON.stringify({}),
+                /*JSON.stringify({
+                spot_id: spot.id,
+                user_id: user.pgapiData.id,
+              }),*/
+              },
+            },
+          };
+          postOcpu(ocpuDispatch, action);
+          console.log('clicked model');
+        }
         break;
       case 'calibrate':
-        console.log('clicked calibrate');
+        {
+          const action: IOcpuStartAction = {
+            type: 'START_OCPU_REQUEST',
+            payload: {
+              url: `/middlelayer/calibrate`,
+              config: {
+                method: 'POST',
+                headers: {},
+                credentials: 'include',
+                body: JSON.stringify({}),
+                /*JSON.stringify({
+                  spot_id: spot.id,
+                  user_id: user.pgapiData.id,
+                }),*/
+              },
+            },
+          };
+          postOcpu(ocpuDispatch, action);
+
+          console.log('clicked calibrate');
+        }
         break;
       default:
         throw new Error('Target for button not defined');
-        break;
     }
     setCalibratePredictSelector(event.currentTarget.id);
     setShowNotification((prevState) => !prevState);
@@ -201,7 +265,7 @@ const Spot: React.FC<RouteProps> = ({ match }) => {
             district={spot.district}
           />
         </Container>
-
+        <Container>{'prediction'}</Container>
         <div className='container'>
           <div className='columns is-centered'>
             <div className='column is-5'>
@@ -238,33 +302,85 @@ const Spot: React.FC<RouteProps> = ({ match }) => {
               )}
             </div>
             <div className='column is-5'>
-              {spot !== undefined &&
-                spot.measurements !== undefined &&
-                spot.measurements.length > 0 && (
-                  <Measurement
-                    measurements={spot.measurements}
-                    hasPrediction={spot.hasPrediction}
-                  >
-                    {(() => {
-                      if (spot.hasPrediction === true) {
-                        return (
-                          <div className='bathingspot__body-prediction'>
-                            <p>
-                              {/*tslint:disable-next-line: max-line-length*/}
-                              <span className='asteriks'>*</span> Die hier
-                              angezeigte Bewertung wird unterstützt durch eine
-                              neuartige tagesaktuelle Vorhersagemethode.{' '}
-                              <Link to={`/${RouteNames.info}`}>
-                                Erfahren Sie mehr&nbsp;&raquo;
-                              </Link>
-                            </p>
-                          </div>
+              {spot !== undefined && spot.measurements !== undefined && (
+                <Measurement
+                  measurements={spot.measurements}
+                  hasPrediction={spot.hasPrediction}
+                >
+                  {(() => {
+                    if (spot.hasPrediction === true) {
+                      return (
+                        <div className='bathingspot__body-prediction'>
+                          <p>
+                            {/*tslint:disable-next-line: max-line-length*/}
+                            <span className='asteriks'>*</span> Die hier
+                            angezeigte Bewertung wird unterstützt durch eine
+                            neuartige tagesaktuelle Vorhersagemethode.{' '}
+                            <Link to={`/${RouteNames.info}`}>
+                              Erfahren Sie mehr&nbsp;&raquo;
+                            </Link>
+                          </p>
+                        </div>
+                      );
+                    }
+                    return null;
+                  })()}
+                </Measurement>
+              )}
+            </div>
+          </div>
+        </div>
+        <div className='container'>
+          <div className='columns is-centered'>
+            <div className='column is-5'>
+              <div className='bathingspot__rain'>
+                <h3 className='title is-3'>Durchs. Regen</h3>
+              </div>
+            </div>
+            <div className='column is-5'>
+              <div className='bathingspot__model'>
+                <h3 className='title is-3'>Vorhersage Modelle</h3>
+                {console.log(spot.model)}
+                {console.log(spot)}
+                {spot !== undefined && spot.models !== undefined && (
+                  <table className='table'>
+                    <tbody>
+                      {(() => {
+                        const dateOpts = {
+                          day: 'numeric',
+                          month: 'short',
+                          weekday: 'short',
+                          year: 'numeric',
+                        };
+                        const sortedModels = spot.models.sort(
+                          (a: IObject, b: IObject) => {
+                            return (
+                              ((new Date(a.updatedAt) as unknown) as number) -
+                              ((new Date(b.updatedAt) as unknown) as number)
+                            );
+                          },
                         );
-                      }
-                      return null;
-                    })()}
-                  </Measurement>
+                        const lastFive = sortedModels.slice(
+                          Math.max(sortedModels.length - 5, 0),
+                        );
+
+                        const rows = lastFive
+                          .reverse()
+                          .map((ele, i) => (
+                            <MeasurementTableRow
+                              key={i}
+                              rowKey={`ID: ${ele.id}`}
+                              rowValue={`Generiert am: ${new Date(
+                                ele.updatedAt,
+                              ).toLocaleDateString('de-DE', dateOpts)}`}
+                            />
+                          ));
+                        return rows;
+                      })()}
+                    </tbody>
+                  </table>
                 )}
+              </div>
             </div>
           </div>
         </div>

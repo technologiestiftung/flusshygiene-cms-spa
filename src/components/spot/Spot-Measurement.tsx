@@ -1,5 +1,5 @@
 import React from 'react';
-import { IObject } from '../../lib/common/interfaces';
+import { IObject, IBathingspotMeasurement } from '../../lib/common/interfaces';
 
 const kA = 'k. A.';
 export interface IMeasurement {
@@ -20,7 +20,7 @@ export interface IMeasurementable {
   measurements: IObject[];
 }
 
-const measurementSort = (a: IObject, b: IObject) => {
+const sortIObjectByDate = (a: IObject, b: IObject) => {
   return (
     ((new Date(a.date) as unknown) as number) -
     ((new Date(b.date) as unknown) as number)
@@ -28,8 +28,18 @@ const measurementSort = (a: IObject, b: IObject) => {
 };
 
 export const Measurement: React.FC<IMeasurement> = (props) => {
-  const sortedMeasurment = props.measurements.sort(measurementSort);
-  const lastMeasurment = sortedMeasurment[sortedMeasurment.length - 1];
+  const sortedMeasurement = props.measurements.sort(sortIObjectByDate);
+
+  let lastMeasurment: IBathingspotMeasurement =
+    sortedMeasurement[sortedMeasurement.length - 1];
+  for (const key in lastMeasurment) {
+    if (lastMeasurment[key] === null) {
+      lastMeasurment[key] = undefined;
+    }
+  }
+  const emptyMeasurment: IBathingspotMeasurement = {};
+  lastMeasurment =
+    lastMeasurment !== undefined ? lastMeasurment : emptyMeasurment;
   return (
     <div className='bathingspot__body-measurement'>
       <h3 className='title is-3'>
@@ -41,10 +51,10 @@ export const Measurement: React.FC<IMeasurement> = (props) => {
           return null;
         })()}
       </h3>
-      <figure className='image is-32x32'>
+      {/* <figure className='image is-32x32'>
         <img src='https://via.placeholder.com/32' alt='prediction icon' />
-      </figure>
-      {(() => {
+      </figure> */}
+      {/* {(() => {
         const dateOpts = {
           day: 'numeric',
           month: 'long',
@@ -53,19 +63,25 @@ export const Measurement: React.FC<IMeasurement> = (props) => {
         };
         return (
           <div>
-            <p>{`wasserqualitaet: (NOT YET PARSED TO TEXT) ${lastMeasurment.wasserqualitaetTxt}`}</p>
+            <p>{`wasserqualitaet: ${
+              lastMeasurment.wasserqualitaetTxt === undefined
+                ? kA
+                : lastMeasurment.wasserqualitaetTxt
+            }`}</p>
             <p>
               (Letzte Messung{' '}
-              {new Date(lastMeasurment.date).toLocaleDateString(
-                'de-DE',
-                dateOpts,
-              )}
+              {lastMeasurment.date !== undefined
+                ? new Date(lastMeasurment.date).toLocaleDateString(
+                    'de-DE',
+                    dateOpts,
+                  )
+                : ''}
               )
             </p>
           </div>
         );
-      })()}
-      <MeasurementTable measurements={sortedMeasurment} />
+      })()} */}
+      <MeasurementTable measurements={sortedMeasurement} />
 
       {props.children}
     </div>
@@ -80,17 +96,49 @@ export const MeasurementTableRow = (props: IMeasurementableRow) => (
 );
 
 export const MeasurementTable = (props: IMeasurementable) => {
-  const sortedMeasurement = props.measurements.sort(measurementSort);
-  const lastMeasurment = sortedMeasurement[sortedMeasurement.length - 1];
-
+  const sortedMeasurement = props.measurements.sort(sortIObjectByDate);
+  let lastMeasurment: IBathingspotMeasurement =
+    sortedMeasurement[sortedMeasurement.length - 1];
+  const emptyMeasurment: IBathingspotMeasurement = {};
+  lastMeasurment =
+    lastMeasurment !== undefined ? lastMeasurment : emptyMeasurment;
+  const dateOpts = {
+    day: 'numeric',
+    month: 'long',
+    weekday: 'long',
+    year: 'numeric',
+  };
   return (
     <table className='table bathingspot__measurement-table'>
       <tbody>
         {
           <MeasurementTableRow
+            rowKey='Letzte Messung'
+            rowValue={
+              lastMeasurment.date !== undefined
+                ? new Date(lastMeasurment.date).toLocaleDateString(
+                    'de-DE',
+                    dateOpts,
+                  )
+                : kA
+            }
+          />
+        }
+        {
+          <MeasurementTableRow
+            rowKey='Wasserqualität'
+            rowValue={
+              lastMeasurment.wasserqualitaetTxt !== undefined
+                ? `${lastMeasurment.wasserqualitaetTxt}`
+                : kA
+            }
+          />
+        }
+        {
+          <MeasurementTableRow
             rowKey='Sichttiefe'
             rowValue={
-              lastMeasurment.sichtTxt !== null
+              lastMeasurment.sichtTxt !== undefined
                 ? `${lastMeasurment.sichtTxt} cm`
                 : kA
             }
@@ -100,7 +148,7 @@ export const MeasurementTable = (props: IMeasurementable) => {
           <MeasurementTableRow
             rowKey='Escherichia coli'
             rowValue={
-              lastMeasurment.conc_ec !== null
+              lastMeasurment.conc_ec !== undefined
                 ? `${lastMeasurment.conc_ec} pro 100 ml`
                 : kA
             }
@@ -110,7 +158,7 @@ export const MeasurementTable = (props: IMeasurementable) => {
           <MeasurementTableRow
             rowKey='Intestinale Enterokokken'
             rowValue={
-              lastMeasurment.conc_ie !== null
+              lastMeasurment.conc_ie !== undefined
                 ? `${lastMeasurment.conc_ie} pro 100 ml`
                 : kA
             }
@@ -119,20 +167,18 @@ export const MeasurementTable = (props: IMeasurementable) => {
         {
           <MeasurementTableRow
             rowKey='Wassertemperatur'
-            rowValue={(() => {
-              if (lastMeasurment.tempTxt !== null) {
-                return `${lastMeasurment.tempTxt.replace('.', ',')} °C`;
-              } else {
-                return kA;
-              }
-            })()}
+            rowValue={
+              lastMeasurment.tempTxt !== undefined
+                ? `${lastMeasurment.tempTxt.replace('.', ',')} ℃`
+                : kA
+            }
           />
         }
         {
           <MeasurementTableRow
             rowKey='Coliforme Bakterien'
             rowValue={
-              lastMeasurment.cb !== null
+              lastMeasurment.cb !== undefined
                 ? `${lastMeasurment.cb} pro 100 ml`
                 : kA
             }
