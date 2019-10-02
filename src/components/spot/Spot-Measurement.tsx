@@ -4,7 +4,7 @@ import { IObject, IBathingspotMeasurement } from '../../lib/common/interfaces';
 const kA = 'k. A.';
 export interface IMeasurement {
   measurements: IObject[];
-  hasPrediction: boolean;
+  hasPrediction?: boolean;
   children?: React.ReactNode;
 }
 
@@ -41,50 +41,10 @@ export const Measurement: React.FC<IMeasurement> = (props) => {
   lastMeasurment =
     lastMeasurment !== undefined ? lastMeasurment : emptyMeasurment;
   return (
-    <div className='bathingspot__body-measurement'>
-      <h3 className='title is-3'>
-        Wasserqualität{' '}
-        {(() => {
-          if (props.hasPrediction === true) {
-            return <span className='asteriks'>*</span>;
-          }
-          return null;
-        })()}
-      </h3>
-      {/* <figure className='image is-32x32'>
-        <img src='https://via.placeholder.com/32' alt='prediction icon' />
-      </figure> */}
-      {/* {(() => {
-        const dateOpts = {
-          day: 'numeric',
-          month: 'long',
-          weekday: 'long',
-          year: 'numeric',
-        };
-        return (
-          <div>
-            <p>{`wasserqualitaet: ${
-              lastMeasurment.wasserqualitaetTxt === undefined
-                ? kA
-                : lastMeasurment.wasserqualitaetTxt
-            }`}</p>
-            <p>
-              (Letzte Messung{' '}
-              {lastMeasurment.date !== undefined
-                ? new Date(lastMeasurment.date).toLocaleDateString(
-                    'de-DE',
-                    dateOpts,
-                  )
-                : ''}
-              )
-            </p>
-          </div>
-        );
-      })()} */}
+    <>
       <MeasurementTable measurements={sortedMeasurement} />
-
       {props.children}
-    </div>
+    </>
   );
 };
 

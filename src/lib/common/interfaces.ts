@@ -77,12 +77,28 @@ export interface IBathingspot {
   measurements?: IObject[];
   rawModelData?: IObject[];
   region?: IObject;
+  rains?: IRain[];
   influencePurificationPlant?: 'yes' | 'no' | 'unknown';
   influenceCombinedSewerSystem?: 'yes' | 'no' | 'unknown';
   influenceRainwater?: 'yes' | 'no' | 'unknown';
   influenceAgriculture?: 'yes' | 'no' | 'unknown';
 }
 
+export interface IRain {
+  id: number;
+  createdAt: Date;
+  updatedAt: Date;
+  date: Date;
+  dateTime: Date;
+  value: number;
+  comment?: string;
+}
+// export interface IDateOptions {
+//     day: 'numeric',
+//     month: 'short',
+//     weekday: 'short',
+//     year: 'numeric',
+// }
 export interface IBathingspotExtend extends IBathingspot {
   csvFile?: File;
 }
@@ -206,6 +222,7 @@ export interface IOcpuStartAction extends IOcpuAction {
   payload: {
     url: string;
     config: RequestInit;
+    processingType: OCpuProcessing;
     //  {
     //   method: string;
     //   headers: { [key: string]: any };
@@ -228,8 +245,10 @@ export interface IOcpuFailAction extends IOcpuAction {
   };
 }
 
+type OCpuProcessing = 'predict' | 'model' | 'calibrate' | undefined;
 export interface IOcpuState {
   [key: string]: any;
+  processing: OCpuProcessing;
   sessionId: string;
   responses: any[];
   errors: any[];

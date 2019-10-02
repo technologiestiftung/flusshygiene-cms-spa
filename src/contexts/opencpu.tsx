@@ -20,19 +20,30 @@ const ocpuReducer: (
 ) => IOcpuState = (state, action) => {
   switch (action.type) {
     case 'START_OCPU_REQUEST': {
+      const locAction = action as IOcpuStartAction;
       console.log('request started');
 
-      return state;
+      return { ...state, processing: locAction.payload.processingType };
     }
     case 'FINISH_OCPU_REQUEST': {
       console.log('request finished');
+      const locAction = action as IOcpuFinishAction;
 
-      return state;
+      return {
+        ...state,
+        processing: undefined,
+        responses: [locAction.payload.response, ...state.responses],
+      };
     }
     case 'FAIL_OCPU_REQUEST': {
       console.log('request failed');
+      const locAction = action as IOcpuFailAction;
 
-      return state;
+      return {
+        ...state,
+        processing: undefined,
+        errors: [locAction.payload.error],
+      };
     }
     default: {
       throw new Error(`Unhandled action type: ${action.type}`);
@@ -45,6 +56,7 @@ const OcpuProvider = ({ children }: OcpuProviderProps) => {
     sessionId: '',
     responses: [],
     errors: [],
+    processing: undefined,
   });
   return (
     <OcpuStateContext.Provider value={state}>
@@ -67,13 +79,14 @@ const useOcpuState = () => {
 };
 
 const postOcpu = async (dispatch: Dispatch, action: IOcpuAction) => {
-  dispatch(action);
   let response: Response;
   const fetchAction = action as IOcpuStartAction;
+  dispatch(fetchAction);
   try {
     console.log('ocpu action triggered');
+    console.log(fetchAction.payload.config);
     response = await fetch(fetchAction.payload.url, fetchAction.payload.config);
-    console.log(response);
+    // console.log(response);
     if (response.ok === true) {
       let json: any;
       try {
@@ -82,7 +95,7 @@ const postOcpu = async (dispatch: Dispatch, action: IOcpuAction) => {
         console.error('Error parsing response from fetch call to json', err);
         throw err;
       }
-      console.log('Response json from postOcpu', json);
+      // console.log('Response json from postOcpu', json);
       const finishPayload: IOcpuFinishAction = {
         type: 'FINISH_OCPU_REQUEST',
         payload: { response: json },
