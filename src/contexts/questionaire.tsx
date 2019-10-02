@@ -1,30 +1,51 @@
 import React, { createContext, useContext, useReducer } from 'react';
 import { getQuestions } from '../questionnaire-data';
+import {
+  loadState,
+  saveState,
+  clearState,
+} from '../lib/persist-state/local-storage';
 // see https://kentcdodds.com/blog/how-to-use-react-context-effectively
 //----
 interface IQuestionsState {
   questions: any[];
   answers: any[];
+  title: string;
   // updateAnswer: (i: number, answer: string) => void;
 }
 interface IAction {
-  type: 'SET_ANSWER';
-  payload: { [key: string]: any };
+  type: 'SET_ANSWER' | 'REMOVE_ANSWERS' | 'SET_TITLE';
+  payload?: { [key: string]: any };
 }
-interface IActionSetAnswer extends IAction {
+export interface IActionSetAnswer extends IAction {
   payload: { index: number; answer: string };
 }
-type Dispatch = (action: IAction) => void;
+interface IActionSetTitle extends IAction {
+  payload: { title: string };
+}
+type Dispatch = (action: IAction | IActionSetAnswer | IActionSetTitle) => void;
 type QuestionsProviderProps = { children: React.ReactNode };
 
+const localStateKey = 'standortbewertung';
 let questions: any[] = [];
 let answers: string[] = [];
+let title: string = '';
 
 (async () => {
   const data = await getQuestions();
   // console.log(data);
   questions = [...data];
-  answers = new Array(questions.length);
+  const localAnswerState = loadState(localStateKey);
+  if (localAnswerState === undefined) {
+    answers = new Array(questions.length);
+    title = '';
+  } else {
+    answers =
+      localAnswerState.answers === undefined
+        ? new Array(questions.length)
+        : localAnswerState.answers;
+    title = localAnswerState.title === undefined ? '' : localAnswerState.title;
+  }
   // setQuestions((prevState) => {
   //   const newState = [...prevState, ...data];
   //   setAnswers(new Array(newState.length));
@@ -44,7 +65,21 @@ const answersReducer = (state: IQuestionsState, action: IAction) => {
       const answer = locAction.payload.answer;
       const tmp = [...state.answers];
       tmp[index] = answer;
+      saveState(localStateKey, { answers: tmp });
       return { ...state, answers: tmp };
+    }
+    case 'REMOVE_ANSWERS': {
+      clearState(localStateKey);
+      return { ...state, answers: [new Array(state.questions)] };
+    }
+    case 'SET_TITLE': {
+      const locAction = action as IActionSetTitle;
+      saveState(localStateKey, {
+        answers: state.answers,
+        title: locAction.payload.title,
+      });
+
+      return { ...state, title: locAction.payload.title };
     }
     default:
       throw new Error(`Unhandled action type: ${action.type}`);
@@ -54,6 +89,7 @@ const QuestionsProvider = ({ children }: QuestionsProviderProps) => {
   const [state, dispatch] = useReducer(answersReducer, {
     questions,
     answers,
+    title,
   });
 
   return (
