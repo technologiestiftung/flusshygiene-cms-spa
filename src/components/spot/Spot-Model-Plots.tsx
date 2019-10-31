@@ -6,11 +6,12 @@ const Plot: React.FC<{
   imageUrl: string;
   title: string;
   description: string;
-}> = ({ imageUrl, title, description }) => {
+  id: number;
+}> = ({ imageUrl, title, description, id }) => {
   return (
     <>
       <div className='column is-5'>
-        <h3 className='is-title is-3'>
+        <h3 className='is-title is-3' id={`plotfile-${id}`}>
           <span>
             <IconChart></IconChart>
           </span>{' '}
@@ -49,9 +50,11 @@ export const SpotModelPlots: React.FC<{ plotfiles: any[] }> = ({
         <Plot
           key={i}
           imageUrl={sortedPlotfiles[i].url}
-          title={`i: ${i} id:${sortedPlotfiles[i].id} ${sortedPlotfiles[i].title}`}
+          title={`${sortedPlotfiles[i].title}`}
           description={sortedPlotfiles[i].description}
+          id={sortedPlotfiles[i].id}
         />
+
         <Plot
           key={i + 1}
           imageUrl={sortedPlotfiles[i + 1].url}
@@ -59,6 +62,7 @@ export const SpotModelPlots: React.FC<{ plotfiles: any[] }> = ({
             sortedPlotfiles[i + 1].title
           }`}
           description={sortedPlotfiles[i + 1].description}
+          id={sortedPlotfiles[i + 1].id}
         />
       </ContainerNoColumn>,
     );
